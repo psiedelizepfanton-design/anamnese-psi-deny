@@ -1,101 +1,203 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Sistema de Anamnese – Psi Edelize Fanton</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Sistema de Anamnese Clínica – Psi. Dra. Deny</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 0;
+:root {
+  --azul: #1f3c88;
+  --azul-claro: #f4f6fb;
+  --cinza: #e5e7eb;
+  --verde: #16a34a;
+  --vermelho: #dc2626;
+  --amarelo: #facc15;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--azul-claro);
+}
+
 header {
-  background: #1f3c88;
+  background: var(--azul);
   color: #fff;
   padding: 20px;
   text-align: center;
 }
-.container {
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+header small {
+  display: block;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.top-actions {
   display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.top-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-export { background: var(--azul); color: #fff; }
+.btn-import { background: var(--amarelo); }
+.btn-print  { background: #fff; }
+
+main {
+  display: grid;
+  grid-template-columns: 320px 1fr;
   gap: 20px;
   padding: 20px;
 }
-.pacientes, .ficha {
+
+aside {
   background: #fff;
   border-radius: 8px;
   padding: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  height: calc(100vh - 200px);
+  overflow-y: auto;
 }
-.pacientes {
-  width: 30%;
+
+aside h2 {
+  margin-top: 0;
 }
-.ficha {
-  width: 70%;
+
+aside input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
 }
-ul {
-  list-style: none;
-  padding: 0;
-}
-li {
-  padding: 6px;
-  border-bottom: 1px solid #eee;
+
+aside button {
+  width: 100%;
+  padding: 8px;
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
 }
-li:hover {
-  background: #eef2ff;
+
+.patient {
+  border: 1px solid var(--cinza);
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 8px;
+  cursor: pointer;
 }
+
+.patient.active {
+  background: var(--azul-claro);
+  border-color: var(--azul);
+}
+
+section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 200px);
+}
+
+section h2 {
+  margin-top: 0;
+}
+
 label {
   font-weight: bold;
+  display: block;
+  margin-top: 10px;
 }
+
 input, select, textarea {
   width: 100%;
   padding: 8px;
-  margin-bottom: 10px;
+  margin-top: 4px;
 }
-button {
-  padding: 8px 14px;
-  margin-right: 5px;
+
+textarea {
+  min-height: 80px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.actions button {
+  padding: 10px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
 }
-.salvar {
-  background: #1f9d55;
-  color: white;
-}
-.excluir {
-  background: #d64545;
-  color: white;
-}
-.atendimento {
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 5px;
-}
+
+.btn-save { background: var(--verde); color: #fff; }
+.btn-delete { background: var(--vermelho); color: #fff; }
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Sistema de Anamnese – Psi Edelize Fanton</h1>
+  <h1>Sistema de Anamnese – Psi. Dra. Deny</h1>
+  <small>Offline • Seguro • Histórico completo do paciente</small>
+
+  <div class="top-actions">
+    <button class="btn-export" onclick="exportar()">Exportar backup</button>
+    <button class="btn-import" onclick="importar()">Importar</button>
+    <button class="btn-print" onclick="window.print()">Imprimir</button>
+  </div>
 </header>
 
-<div class="container">
+<main>
+  <aside>
+    <h2>Pacientes</h2>
+    <input id="busca" placeholder="Buscar por nome..." onkeyup="renderPacientes()">
+    <button onclick="novoPaciente()">+ Novo paciente</button>
+    <div id="lista"></div>
+  </aside>
 
-  <div class="pacientes">
-    <h3>Pacientes (A–Z)</h3>
-    <ul id="listaPacientes"></ul>
-    <input id="novoPaciente" placeholder="Novo paciente" />
-    <button onclick="addPaciente()">Adicionar</button>
-  </div>
+  <section>
+    <h2>Ficha Clínica</h2>
 
-  <div class="ficha">
-    <h3>Ficha Clínica</h3>
+    <label>Nome do paciente</label>
+    <input id="nome">
+
+    <label>Data de nascimento</label>
+    <input type="date" id="nascimento">
+
+    <label>Telefone / WhatsApp</label>
+    <input id="telefone">
+
+    <label>Email</label>
+    <input id="email">
+
+    <label>Cidade</label>
+    <input id="cidade">
+
+    <label>Estado civil</label>
+    <input id="estadoCivil">
 
     <label>Tipo de atendimento</label>
     <select id="tipo">
@@ -104,78 +206,139 @@ button {
       <option>Criança</option>
     </select>
 
-    <label>Descrição do atendimento</label>
-    <textarea id="descricao"></textarea>
+    <label>Queixa / Objetivo inicial</label>
+    <textarea id="queixa"></textarea>
 
-    <button class="salvar" onclick="salvarAtendimento()">Salvar atendimento</button>
+    <label>Desafios principais</label>
+    <textarea id="desafios"></textarea>
 
-    <div id="historico"></div>
-  </div>
+    <label>Gatilhos / Eventos marcantes</label>
+    <textarea id="gatilhos"></textarea>
 
-</div>
+    <label>Hábitos e rotina</label>
+    <textarea id="habitos"></textarea>
+
+    <label>Impacto funcional / organização</label>
+    <textarea id="impacto"></textarea>
+
+    <label>Observações clínicas</label>
+    <textarea id="observacoes"></textarea>
+
+    <div class="actions">
+      <button class="btn-save" onclick="salvar()">Salvar</button>
+      <button class="btn-delete" onclick="excluir()">Excluir</button>
+    </div>
+  </section>
+</main>
 
 <script>
 let pacientes = JSON.parse(localStorage.getItem("pacientes") || "[]");
 let atual = null;
 
-function renderPacientes() {
-  pacientes.sort((a,b)=>a.nome.localeCompare(b.nome));
-  const ul = document.getElementById("listaPacientes");
-  ul.innerHTML = "";
-  pacientes.forEach((p,i)=>{
-    const li = document.createElement("li");
-    li.textContent = p.nome;
-    li.onclick = ()=>selecionar(i);
-    ul.appendChild(li);
-  });
+function salvarStorage() {
   localStorage.setItem("pacientes", JSON.stringify(pacientes));
 }
 
-function addPaciente() {
-  const nome = document.getElementById("novoPaciente").value;
-  if(!nome) return;
-  pacientes.push({ nome, atendimentos: [] });
-  document.getElementById("novoPaciente").value="";
-  renderPacientes();
+function novoPaciente() {
+  atual = { id: Date.now() };
+  limpar();
 }
 
-function selecionar(i) {
-  atual = i;
-  renderAtendimentos();
+function limpar() {
+  document.querySelectorAll("input, textarea").forEach(e => e.value = "");
 }
 
-function salvarAtendimento() {
-  if(atual===null) return;
-  pacientes[atual].atendimentos.push({
+function salvar() {
+  if (!document.getElementById("nome").value) {
+    alert("Informe o nome do paciente.");
+    return;
+  }
+
+  const dados = {
+    id: atual.id || Date.now(),
+    nome: nome.value,
+    nascimento: nascimento.value,
+    telefone: telefone.value,
+    email: email.value,
+    cidade: cidade.value,
+    estadoCivil: estadoCivil.value,
     tipo: tipo.value,
-    texto: descricao.value,
-    data: new Date().toLocaleString()
-  });
-  descricao.value="";
-  renderAtendimentos();
+    queixa: queixa.value,
+    desafios: desafios.value,
+    gatilhos: gatilhos.value,
+    habitos: habitos.value,
+    impacto: impacto.value,
+    observacoes: observacoes.value
+  };
+
+  const idx = pacientes.findIndex(p => p.id === dados.id);
+  if (idx >= 0) pacientes[idx] = dados;
+  else pacientes.push(dados);
+
+  salvarStorage();
+  renderPacientes();
+  alert("Paciente salvo com sucesso.");
+}
+
+function excluir() {
+  if (!atual) return;
+  pacientes = pacientes.filter(p => p.id !== atual.id);
+  salvarStorage();
+  atual = null;
+  limpar();
   renderPacientes();
 }
 
-function excluirAtendimento(i) {
-  pacientes[atual].atendimentos.splice(i,1);
-  renderAtendimentos();
-  renderPacientes();
+function renderPacientes() {
+  const busca = document.getElementById("busca").value.toLowerCase();
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  pacientes
+    .filter(p => p.nome.toLowerCase().includes(busca))
+    .sort((a,b)=>a.nome.localeCompare(b.nome))
+    .forEach(p => {
+      const div = document.createElement("div");
+      div.className = "patient";
+      div.innerHTML = `<strong>${p.nome}</strong>`;
+      div.onclick = () => carregar(p.id);
+      lista.appendChild(div);
+    });
 }
 
-function renderAtendimentos() {
-  const div = document.getElementById("historico");
-  div.innerHTML="";
-  pacientes[atual].atendimentos.forEach((a,i)=>{
-    const box = document.createElement("div");
-    box.className="atendimento";
-    box.innerHTML = `<b>${a.tipo}</b> – ${a.data}<br>${a.texto}<br>`;
-    const btn = document.createElement("button");
-    btn.textContent="Excluir atendimento";
-    btn.className="excluir";
-    btn.onclick=()=>excluirAtendimento(i);
-    box.appendChild(btn);
-    div.appendChild(box);
-  });
+function carregar(id) {
+  atual = pacientes.find(p => p.id === id);
+  for (let k in atual) {
+    if (document.getElementById(k)) {
+      document.getElementById(k).value = atual[k];
+    }
+  }
+}
+
+function exportar() {
+  const blob = new Blob([JSON.stringify(pacientes)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "backup-anamnese.json";
+  a.click();
+}
+
+function importar() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      pacientes = JSON.parse(reader.result);
+      salvarStorage();
+      renderPacientes();
+      alert("Backup importado com sucesso.");
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 
 renderPacientes();
