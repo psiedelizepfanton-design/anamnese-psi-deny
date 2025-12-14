@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Sistema de Anamnese – Psi Edelize Fanton</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #1f3c88;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+.pacientes, .ficha {
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.pacientes {
+  width: 30%;
+}
+.ficha {
+  width: 70%;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  padding: 6px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+li:hover {
+  background: #eef2ff;
+}
+label {
+  font-weight: bold;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+button {
+  padding: 8px 14px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.salvar {
+  background: #1f9d55;
+  color: white;
+}
+.excluir {
+  background: #d64545;
+  color: white;
+}
+.atendimento {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Sistema de Anamnese – Psi Edelize Fanton</h1>
+</header>
+
+<div class="container">
+
+  <div class="pacientes">
+    <h3>Pacientes (A–Z)</h3>
+    <ul id="listaPacientes"></ul>
+    <input id="novoPaciente" placeholder="Novo paciente" />
+    <button onclick="addPaciente()">Adicionar</button>
+  </div>
+
+  <div class="ficha">
+    <h3>Ficha Clínica</h3>
+
+    <label>Tipo de atendimento</label>
+    <select id="tipo">
+      <option>Adulto</option>
+      <option>Adolescente</option>
+      <option>Criança</option>
+    </select>
+
+    <label>Descrição do atendimento</label>
+    <textarea id="descricao"></textarea>
+
+    <button class="salvar" onclick="salvarAtendimento()">Salvar atendimento</button>
+
+    <div id="historico"></div>
+  </div>
+
+</div>
+
+<script>
+let pacientes = JSON.parse(localStorage.getItem("pacientes") || "[]");
+let atual = null;
+
+function renderPacientes() {
+  pacientes.sort((a,b)=>a.nome.localeCompare(b.nome));
+  const ul = document.getElementById("listaPacientes");
+  ul.innerHTML = "";
+  pacientes.forEach((p,i)=>{
+    const li = document.createElement("li");
+    li.textContent = p.nome;
+    li.onclick = ()=>selecionar(i);
+    ul.appendChild(li);
+  });
+  localStorage.setItem("pacientes", JSON.stringify(pacientes));
+}
+
+function addPaciente() {
+  const nome = document.getElementById("novoPaciente").value;
+  if(!nome) return;
+  pacientes.push({ nome, atendimentos: [] });
+  document.getElementById("novoPaciente").value="";
+  renderPacientes();
+}
+
+function selecionar(i) {
+  atual = i;
+  renderAtendimentos();
+}
+
+function salvarAtendimento() {
+  if(atual===null) return;
+  pacientes[atual].atendimentos.push({
+    tipo: tipo.value,
+    texto: descricao.value,
+    data: new Date().toLocaleString()
+  });
+  descricao.value="";
+  renderAtendimentos();
+  renderPacientes();
+}
+
+function excluirAtendimento(i) {
+  pacientes[atual].atendimentos.splice(i,1);
+  renderAtendimentos();
+  renderPacientes();
+}
+
+function renderAtendimentos() {
+  const div = document.getElementById("historico");
+  div.innerHTML="";
+  pacientes[atual].atendimentos.forEach((a,i)=>{
+    const box = document.createElement("div");
+    box.className="atendimento";
+    box.innerHTML = `<b>${a.tipo}</b> – ${a.data}<br>${a.texto}<br>`;
+    const btn = document.createElement("button");
+    btn.textContent="Excluir atendimento";
+    btn.className="excluir";
+    btn.onclick=()=>excluirAtendimento(i);
+    box.appendChild(btn);
+    div.appendChild(box);
+  });
+}
+
+renderPacientes();
+</script>
+
+</body>
+</html>
