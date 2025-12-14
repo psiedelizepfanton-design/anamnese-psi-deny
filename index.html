@@ -2,250 +2,583 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Sistema de Anamnese – Psi Dra. Deny</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Sistema Clínico Pro - Psi Dra. Deny</title>
 <style>
-body {
-  font-family: Inter, Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-}
+    :root {
+        --primary: #1e3a8a; /* Azul Profissional */
+        --secondary: #3b82f6;
+        --bg: #f3f4f6;
+        --surface: #ffffff;
+        --text: #1f2937;
+        --border: #e5e7eb;
+        --danger: #ef4444;
+        --success: #10b981;
+    }
 
-header {
-  background: #1f3c88;
-  color: #fff;
-  padding: 20px;
-  text-align: center;
-}
+    * { box-sizing: border-box; outline: none; }
+    
+    body {
+        font-family: 'Segoe UI', Inter, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
 
-main {
-  padding: 20px;
-  display: flex;
-  gap: 20px;
-}
+    /* TELA DE LOGIN */
+    #loginScreen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--primary);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 1000;
+    }
+    .login-box {
+        background: white; padding: 2rem; border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; width: 300px;
+    }
+    .login-box h2 { color: var(--primary); margin-top: 0; }
+    
+    /* LAYOUT PRINCIPAL */
+    header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0 20px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    header h1 { font-size: 1.2rem; color: var(--primary); margin: 0; }
+    
+    .main-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
 
-.panel {
-  background: #fff;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
+    /* SIDEBAR (LISTA DE PACIENTES) */
+    aside {
+        width: 300px;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+    }
+    .search-bar { padding: 15px; border-bottom: 1px solid var(--border); }
+    .patient-list { 
+        flex: 1; overflow-y: auto; 
+    }
+    .patient-item {
+        padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer;
+        transition: background 0.2s; display: flex; justify-content: space-between;
+    }
+    .patient-item:hover, .patient-item.active { background: #eff6ff; border-left: 4px solid var(--primary); }
+    
+    /* ÁREA DE CONTEÚDO */
+    main {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
 
-#pacientes {
-  width: 30%;
-}
+    .card {
+        background: white; border-radius: 8px; padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
 
-#conteudo {
-  width: 70%;
-}
+    /* FORMULÁRIOS */
+    input, textarea, select {
+        width: 100%; padding: 10px; margin: 5px 0 15px 0;
+        border: 1px solid var(--border); border-radius: 6px;
+        font-family: inherit; font-size: 0.95rem;
+    }
+    input:focus, textarea:focus { border-color: var(--secondary); ring: 2px solid var(--secondary); }
+    
+    textarea { min-height: 100px; resize: vertical; }
 
-input, select, textarea, button {
-  width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  margin-bottom: 12px;
-}
+    button {
+        background: var(--primary); color: white; border: none;
+        padding: 10px 20px; border-radius: 6px; cursor: pointer;
+        font-weight: 600; transition: 0.2s;
+    }
+    button:hover { background: var(--secondary); }
+    button.secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+    button.secondary:hover { background: #f3f4f6; }
+    button.danger { background: var(--danger); }
+    button.icon-btn { padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
 
-textarea {
-  min-height: 80px;
-}
+    /* ABAS */
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .tab { padding: 10px 20px; cursor: pointer; opacity: 0.6; border-bottom: 2px solid transparent; }
+    .tab.active { opacity: 1; border-bottom-color: var(--primary); color: var(--primary); font-weight: bold; }
 
-button {
-  background: #1f3c88;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    /* TIMELINE DAS SESSÕES */
+    .timeline-item {
+        border-left: 3px solid var(--primary);
+        padding-left: 20px; margin-bottom: 20px; position: relative;
+    }
+    .timeline-item::before {
+        content: ''; position: absolute; left: -8px; top: 0;
+        width: 13px; height: 13px; background: var(--primary); border-radius: 50%;
+    }
+    .date-badge { 
+        background: #e0e7ff; color: var(--primary); padding: 4px 8px; 
+        border-radius: 4px; font-size: 0.85rem; font-weight: bold; display: inline-block; margin-bottom: 8px;
+    }
 
-button.sec {
-  background: #999;
-}
+    /* MODAL DE CONFIGURAÇÃO */
+    .modal {
+        display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+        background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;
+    }
+    .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; }
 
-.lista {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.item {
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.item:hover {
-  background: #eef2ff;
-}
-
-h3 {
-  margin-top: 0;
-  color: #1f3c88;
-}
-
-small {
-  color: #666;
-}
+    .hidden { display: none !important; }
 </style>
 </head>
-
 <body>
 
+<div id="loginScreen">
+    <div class="login-box">
+        <h2>🔒 Área Restrita</h2>
+        <p>Psi. Dra. Deny</p>
+        <input type="password" id="loginPass" placeholder="Digite sua senha de acesso">
+        <button onclick="fazerLogin()">Entrar / Criar Senha</button>
+        <p id="loginMsg" style="color:red; font-size:0.8rem; margin-top:10px;"></p>
+    </div>
+</div>
+
 <header>
-  <h1>Sistema de Anamnese Clínica</h1>
-  <small>Uso exclusivo – Psi Dra. Deny</small>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <h1>PsiManager 2.0</h1>
+    </div>
+    <div style="display:flex; gap: 10px;">
+        <button class="secondary" onclick="exportarDados()">💾 Backup (Salvar)</button>
+        <button class="secondary" onclick="triggerImport()">📂 Importar</button>
+        <button class="icon-btn secondary" onclick="abrirConfig()">⚙️</button>
+        <button class="icon-btn danger" onclick="logout()">🔒</button>
+    </div>
 </header>
 
-<main>
+<div class="main-container">
+    <aside>
+        <div class="search-bar">
+            <input type="text" id="buscaInput" placeholder="🔍 Buscar paciente..." onkeyup="filtrarPacientes()">
+            <button onclick="adicionarPaciente()" style="width:100%">+ Novo Paciente</button>
+        </div>
+        <div class="patient-list" id="listaPacientes">
+            </div>
+    </aside>
 
-<div id="pacientes" class="panel">
-  <h3>Pacientes</h3>
-  <input id="novoNome" placeholder="Nome do paciente">
-  <button onclick="criarPaciente()">Adicionar</button>
-  <div class="lista" id="listaPacientes"></div>
+    <main id="areaTrabalho">
+        <div id="emptyState" style="text-align:center; padding-top:50px; color:#888;">
+            <h2>Selecione ou crie um paciente</h2>
+            <p>Os dados são criptografados localmente.</p>
+        </div>
+
+        <div id="pacienteView" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 id="tituloPaciente" style="color:var(--primary)">Nome do Paciente</h2>
+                <button class="secondary" style="font-size:0.8rem; padding:5px 10px;" onclick="excluirPaciente()">🗑 Excluir</button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="mudarAba('anamnese')">Anamnese</div>
+                <div class="tab" onclick="mudarAba('sessoes')">Sessões Clínicas</div>
+            </div>
+
+            <div id="tabAnamnese">
+                <div class="card">
+                    <h3>Dados Clínicos</h3>
+                    <div id="camposAnamnese">
+                        </div>
+                    <button onclick="salvarAnamneseAtual()">Salvar Alterações</button>
+                </div>
+            </div>
+
+            <div id="tabSessoes" class="hidden">
+                <div class="card">
+                    <h3>Nova Sessão</h3>
+                    <div style="display:flex; gap:10px;">
+                        <input type="date" id="dataSessao" style="width:150px">
+                    </div>
+                    <textarea id="textoEvolucao" placeholder="Descreva a evolução, intervenções e plano terapêutico..."></textarea>
+                    <button onclick="adicionarSessao()">Registrar Sessão</button>
+                </div>
+
+                <div id="historicoSessoes">
+                    </div>
+            </div>
+        </div>
+    </main>
 </div>
 
-<div id="conteudo" class="panel">
-  <h3 id="tituloPaciente">Selecione um paciente</h3>
-
-  <div id="blocos" style="display:none">
-
-    <h4>📌 Anamnese Inicial</h4>
-
-    <textarea id="queixa" placeholder="Queixa principal"></textarea>
-    <textarea id="objetivo" placeholder="Objetivo terapêutico"></textarea>
-    <textarea id="historia" placeholder="História do problema"></textarea>
-    <textarea id="contexto" placeholder="Contexto psicossocial"></textarea>
-    <textarea id="avaliacao" placeholder="Avaliação clínica inicial"></textarea>
-
-    <button onclick="salvarAnamnese()">Salvar Anamnese</button>
-
-    <hr>
-
-    <h4>🗓 Sessão Clínica</h4>
-    <input type="date" id="dataSessao">
-    <textarea id="evolucao" placeholder="Evolução da sessão"></textarea>
-    <textarea id="intervencao" placeholder="Intervenções realizadas"></textarea>
-    <textarea id="plano" placeholder="Plano para próxima sessão"></textarea>
-
-    <button onclick="salvarSessao()">Salvar Sessão</button>
-
-    <hr>
-
-    <h4>📚 Histórico</h4>
-    <div id="historico"></div>
-
-    <hr>
-
-    <button class="sec" onclick="exportar()">Exportar Backup</button>
-    <button class="sec" onclick="importar()">Importar Backup</button>
-
-  </div>
+<div id="modalConfig" class="modal">
+    <div class="modal-content">
+        <h3>Configurar Campos da Anamnese</h3>
+        <p>Defina os títulos dos campos (separados por vírgula):</p>
+        <textarea id="configCampos" style="height:100px"></textarea>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button class="secondary" onclick="fecharConfig()">Cancelar</button>
+            <button onclick="salvarConfig()">Salvar Configuração</button>
+        </div>
+    </div>
 </div>
 
-</main>
+<input type="file" id="fileInput" accept=".json,.txt" style="display:none" onchange="processarImportacao(this)">
 
 <script>
-let pacientes = JSON.parse(localStorage.getItem("psi_deny")) || {};
-let atual = null;
+// --- ESTADO DO SISTEMA ---
+let ESTADO = {
+    senha: null,
+    pacientes: {},
+    config: {
+        campos: ["Queixa Principal", "Histórico", "Contexto Familiar", "Avaliação Inicial", "Objetivos"]
+    },
+    pacienteAtual: null
+};
 
-function salvar() {
-  localStorage.setItem("psi_deny", JSON.stringify(pacientes));
+// --- CRIPTOGRAFIA SIMPLES (XOR + Base64) ---
+// Nota: Para um sistema local sem backend, isso previne leitura simples (olheiros).
+function criptografar(texto, senha) {
+    let resultado = "";
+    for (let i = 0; i < texto.length; i++) {
+        resultado += String.fromCharCode(texto.charCodeAt(i) ^ senha.charCodeAt(i % senha.length));
+    }
+    return btoa(resultado); // Converte para Base64
 }
 
-function criarPaciente() {
-  const nome = novoNome.value.trim();
-  if (!nome) return alert("Informe o nome.");
-  pacientes[nome] = { anamnese:{}, sessoes:[] };
-  salvar();
-  renderPacientes();
-  novoNome.value="";
+function descriptografar(textoCifrado, senha) {
+    try {
+        let texto = atob(textoCifrado); // Decodifica Base64
+        let resultado = "";
+        for (let i = 0; i < texto.length; i++) {
+            resultado += String.fromCharCode(texto.charCodeAt(i) ^ senha.charCodeAt(i % senha.length));
+        }
+        return resultado;
+    } catch (e) {
+        return null; // Erro na senha ou dados corrompidos
+    }
 }
 
-function renderPacientes() {
-  listaPacientes.innerHTML="";
-  Object.keys(pacientes).forEach(n=>{
-    const d=document.createElement("div");
-    d.className="item";
-    d.innerText=n;
-    d.onclick=()=>abrirPaciente(n);
-    listaPacientes.appendChild(d);
-  });
+// --- SISTEMA DE ARQUIVOS E PERSISTÊNCIA ---
+const DB_KEY = "PSI_DENY_DATA_V2";
+
+function salvarNoDisco() {
+    if(!ESTADO.senha) return;
+    const dadosPuros = JSON.stringify({
+        pacientes: ESTADO.pacientes,
+        config: ESTADO.config
+    });
+    // Salva encriptado no LocalStorage
+    localStorage.setItem(DB_KEY, criptografar(dadosPuros, ESTADO.senha));
+}
+
+function carregarDoDisco() {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return false; // Primeiro acesso
+    
+    const jsonStr = descriptografar(raw, ESTADO.senha);
+    if (!jsonStr) return "SENHA_INCORRETA";
+
+    try {
+        const dados = JSON.parse(jsonStr);
+        ESTADO.pacientes = dados.pacientes || {};
+        ESTADO.config = dados.config || ESTADO.config;
+        return true;
+    } catch (e) {
+        return "ERRO_DADOS";
+    }
+}
+
+// --- LOGICA DE LOGIN ---
+function fazerLogin() {
+    const pass = document.getElementById('loginPass').value;
+    if (!pass) return;
+
+    // Se já existe dados, tenta descriptografar
+    if (localStorage.getItem(DB_KEY)) {
+        ESTADO.senha = pass;
+        const resultado = carregarDoDisco();
+        if (resultado === true) {
+            iniciarApp();
+        } else if (resultado === "SENHA_INCORRETA") {
+            document.getElementById('loginMsg').innerText = "Senha incorreta.";
+            ESTADO.senha = null;
+        } else {
+            alert("Dados corrompidos ou erro fatal.");
+        }
+    } else {
+        // Primeiro acesso, define a senha
+        if (confirm("Esta será sua senha Mestra para criptografar os dados. Não a esqueça! Confirmar?")) {
+            ESTADO.senha = pass;
+            salvarNoDisco();
+            iniciarApp();
+        }
+    }
+}
+
+function logout() {
+    ESTADO.senha = null;
+    location.reload();
+}
+
+function iniciarApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    renderListaPacientes();
+    atualizarCamposDinamicos();
+}
+
+// --- GESTÃO DE PACIENTES ---
+function adicionarPaciente() {
+    const nome = prompt("Nome do novo paciente:");
+    if (!nome) return;
+    if (ESTADO.pacientes[nome]) return alert("Paciente já existe!");
+
+    // Estrutura do Paciente
+    ESTADO.pacientes[nome] = {
+        cadastro: new Date().toISOString(),
+        anamnese: {}, // Campos dinâmicos entram aqui
+        sessoes: []
+    };
+    
+    salvarNoDisco();
+    renderListaPacientes();
+    abrirPaciente(nome);
+}
+
+function excluirPaciente() {
+    if (!ESTADO.pacienteAtual) return;
+    const confirmacao = prompt(`Para excluir ${ESTADO.pacienteAtual}, digite 'DELETAR':`);
+    if (confirmacao === 'DELETAR') {
+        delete ESTADO.pacientes[ESTADO.pacienteAtual];
+        ESTADO.pacienteAtual = null;
+        salvarNoDisco();
+        renderListaPacientes();
+        document.getElementById('pacienteView').classList.add('hidden');
+        document.getElementById('emptyState').classList.remove('hidden');
+    }
+}
+
+function renderListaPacientes() {
+    const lista = document.getElementById('listaPacientes');
+    const termo = document.getElementById('buscaInput').value.toLowerCase();
+    lista.innerHTML = "";
+
+    const nomes = Object.keys(ESTADO.pacientes).sort();
+    
+    nomes.forEach(nome => {
+        if (nome.toLowerCase().includes(termo)) {
+            const div = document.createElement('div');
+            div.className = `patient-item ${ESTADO.pacienteAtual === nome ? 'active' : ''}`;
+            div.innerText = nome;
+            div.onclick = () => abrirPaciente(nome);
+            lista.appendChild(div);
+        }
+    });
+}
+
+function filtrarPacientes() {
+    renderListaPacientes();
 }
 
 function abrirPaciente(nome) {
-  atual = nome;
-  tituloPaciente.innerText = nome;
-  blocos.style.display="block";
-  const a = pacientes[nome].anamnese;
-  queixa.value=a.queixa||"";
-  objetivo.value=a.objetivo||"";
-  historia.value=a.historia||"";
-  contexto.value=a.contexto||"";
-  avaliacao.value=a.avaliacao||"";
-  renderHistorico();
+    ESTADO.pacienteAtual = nome;
+    document.getElementById('tituloPaciente').innerText = nome;
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('pacienteView').classList.remove('hidden');
+    
+    // Renderiza dados
+    renderListaPacientes(); // Para atualizar o highlight
+    preencherAnamnese();
+    renderSessoes();
+    mudarAba('anamnese'); // Reseta para primeira aba
 }
 
-function salvarAnamnese() {
-  pacientes[atual].anamnese = {
-    queixa:queixa.value,
-    objetivo:objetivo.value,
-    historia:historia.value,
-    contexto:contexto.value,
-    avaliacao:avaliacao.value
-  };
-  salvar();
-  alert("Anamnese salva.");
+// --- ANAMNESE E CAMPOS DINÂMICOS ---
+function atualizarCamposDinamicos() {
+    const container = document.getElementById('camposAnamnese');
+    container.innerHTML = "";
+    ESTADO.config.campos.forEach(campo => {
+        const label = document.createElement('label');
+        label.innerText = campo;
+        label.style.fontWeight = "bold";
+        label.style.display = "block";
+        label.style.marginTop = "10px";
+
+        const area = document.createElement('textarea');
+        area.dataset.campo = campo; // Marcador para salvar depois
+        area.placeholder = `Digite informações sobre ${campo}...`;
+        
+        container.appendChild(label);
+        container.appendChild(area);
+    });
 }
 
-function salvarSessao() {
-  if (!dataSessao.value) return alert("Informe a data.");
-  pacientes[atual].sessoes.push({
-    data:dataSessao.value,
-    evolucao:evolucao.value,
-    intervencao:intervencao.value,
-    plano:plano.value
-  });
-  salvar();
-  evolucao.value=intervencao.value=plano.value="";
-  renderHistorico();
+function preencherAnamnese() {
+    const dados = ESTADO.pacientes[ESTADO.pacienteAtual].anamnese || {};
+    const areas = document.querySelectorAll('#camposAnamnese textarea');
+    areas.forEach(area => {
+        const campoNome = area.dataset.campo;
+        area.value = dados[campoNome] || "";
+    });
 }
 
-function renderHistorico() {
-  historico.innerHTML="";
-  pacientes[atual].sessoes.forEach(s=>{
-    historico.innerHTML+=`
-      <div class="item">
-        <b>${s.data}</b><br>
-        Evolução: ${s.evolucao}<br>
-        Intervenções: ${s.intervencao}<br>
-        Plano: ${s.plano}
-      </div>`;
-  });
+function salvarAnamneseAtual() {
+    if (!ESTADO.pacienteAtual) return;
+    const areas = document.querySelectorAll('#camposAnamnese textarea');
+    const novosDados = {};
+    areas.forEach(area => {
+        novosDados[area.dataset.campo] = area.value;
+    });
+    
+    ESTADO.pacientes[ESTADO.pacienteAtual].anamnese = novosDados;
+    salvarNoDisco();
+    alert("Anamnese salva com sucesso! ✅");
 }
 
-function exportar() {
-  const blob = new Blob([JSON.stringify(pacientes)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="backup-psi-deny.json";
-  a.click();
+// --- SESSÕES CLÍNICAS ---
+function adicionarSessao() {
+    const data = document.getElementById('dataSessao').value;
+    const texto = document.getElementById('textoEvolucao').value;
+    
+    if (!data || !texto) return alert("Preencha a data e a evolução.");
+
+    ESTADO.pacientes[ESTADO.pacienteAtual].sessoes.push({
+        id: Date.now(),
+        data: data,
+        texto: texto
+    });
+
+    // Ordena sessões por data (mais recente primeiro)
+    ESTADO.pacientes[ESTADO.pacienteAtual].sessoes.sort((a,b) => new Date(b.data) - new Date(a.data));
+
+    salvarNoDisco();
+    document.getElementById('textoEvolucao').value = "";
+    renderSessoes();
 }
 
-function importar() {
-  const i=document.createElement("input");
-  i.type="file";
-  i.accept="application/json";
-  i.onchange=e=>{
-    const r=new FileReader();
-    r.onload=()=>{pacientes=JSON.parse(r.result); salvar(); renderPacientes();};
-    r.readAsText(e.target.files[0]);
-  };
-  i.click();
+function renderSessoes() {
+    const lista = ESTADO.pacientes[ESTADO.pacienteAtual].sessoes || [];
+    const container = document.getElementById('historicoSessoes');
+    container.innerHTML = "<h4>Histórico Clínico</h4>";
+
+    if (lista.length === 0) {
+        container.innerHTML += "<p style='color:#888'>Nenhuma sessão registrada.</p>";
+        return;
+    }
+
+    lista.forEach(sessao => {
+        const div = document.createElement('div');
+        div.className = "timeline-item";
+        
+        // Formata data brasileira
+        const dataFormatada = new Date(sessao.data).toLocaleDateString('pt-BR');
+        
+        div.innerHTML = `
+            <div class="date-badge">${dataFormatada}</div>
+            <div style="white-space: pre-wrap;">${sessao.texto}</div>
+        `;
+        container.appendChild(div);
+    });
 }
 
-renderPacientes();
+// --- UI HELPERS ---
+function mudarAba(aba) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#tabAnamnese, #tabSessoes').forEach(d => d.classList.add('hidden'));
+    
+    if (aba === 'anamnese') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('tabAnamnese').classList.remove('hidden');
+    } else {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('tabSessoes').classList.remove('hidden');
+    }
+}
+
+// --- CONFIGURAÇÕES ---
+function abrirConfig() {
+    document.getElementById('configCampos').value = ESTADO.config.campos.join(", ");
+    document.getElementById('modalConfig').style.display = 'flex';
+}
+
+function fecharConfig() {
+    document.getElementById('modalConfig').style.display = 'none';
+}
+
+function salvarConfig() {
+    const texto = document.getElementById('configCampos').value;
+    const array = texto.split(",").map(s => s.trim()).filter(s => s);
+    if (array.length > 0) {
+        ESTADO.config.campos = array;
+        salvarNoDisco();
+        atualizarCamposDinamicos();
+        if (ESTADO.pacienteAtual) preencherAnamnese(); // Recarrega se tiver aberto
+        fecharConfig();
+        alert("Campos atualizados!");
+    }
+}
+
+// --- IMPORTAR / EXPORTAR ---
+function exportarDados() {
+    if (!ESTADO.senha) return alert("Faça login primeiro.");
+    
+    // Gera arquivo JSON completo
+    const dados = JSON.stringify({
+        pacientes: ESTADO.pacientes,
+        config: ESTADO.config
+    }, null, 2);
+
+    const blob = new Blob([dados], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Backup_Psi_Deny_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function triggerImport() {
+    document.getElementById('fileInput').click();
+}
+
+function processarImportacao(input) {
+    const arquivo = input.files[0];
+    if (!arquivo) return;
+
+    const leitor = new FileReader();
+    leitor.onload = function(e) {
+        try {
+            const json = JSON.parse(e.target.result);
+            if (json.pacientes && json.config) {
+                if(confirm("Isso irá SUBSTITUIR os dados atuais pelos do arquivo. Confirma?")) {
+                    ESTADO.pacientes = json.pacientes;
+                    ESTADO.config = json.config;
+                    salvarNoDisco();
+                    iniciarApp();
+                    alert("Importação realizada com sucesso! ✅");
+                }
+            } else {
+                alert("Arquivo inválido. Formato não reconhecido.");
+            }
+        } catch (erro) {
+            alert("Erro ao ler o arquivo. Verifique se é um backup válido.");
+        }
+    };
+    leitor.readAsText(arquivo);
+    input.value = ""; // Limpa para permitir re-seleção
+}
+
+// Inicializa a data de hoje no input de sessão
+document.getElementById('dataSessao').valueAsDate = new Date();
+
 </script>
-
 </body>
 </html>
