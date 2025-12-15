@@ -3,608 +3,474 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema Clínico Pro v3.0 – Psi Dra. Deny</title>
+<title>PsiManager v6.6 – Freud Edition</title>
 <style>
-    :root {
-        --primary: #1e3a8a; /* Azul Profissional */
-        --secondary: #3b82f6;
-        --bg: #f3f4f6;
-        --surface: #ffffff;
-        --text: #1f2937;
-        --border: #e5e7eb;
-        --danger: #ef4444;
-        --success: #10b981;
-        --warning: #f59e0b;
+    /* --- ESTILO GERAL --- */
+    :root { 
+        --primary: #1e3a8a; --secondary: #3b82f6; --bg: #f8fafc; --surface: #ffffff; 
+        --text: #0f172a; --border: #cbd5e1; --danger: #ef4444; --success: #10b981; 
+        --freud: #4c1d95; /* Roxo Profundo para Freud */
     }
-
     * { box-sizing: border-box; outline: none; }
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     
-    body {
-        font-family: 'Segoe UI', Inter, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    /* TELA DE LOGIN */
-    #loginScreen {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: var(--primary);
-        display: flex; justify-content: center; align-items: center;
-        z-index: 1000;
-    }
-    .login-box {
-        background: white; padding: 2rem; border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; width: 300px;
-    }
-    
-    /* LAYOUT PRINCIPAL */
-    header {
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        padding: 0 20px;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .main-container {
-        display: flex;
-        flex: 1;
-        overflow: hidden;
-    }
-
-    /* SIDEBAR */
-    aside {
-        width: 320px;
-        background: var(--surface);
-        border-right: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-    }
-    .search-bar { padding: 15px; border-bottom: 1px solid var(--border); background: #f8fafc; }
-    .patient-list { flex: 1; overflow-y: auto; }
-    .patient-item {
-        padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer;
-        transition: background 0.2s;
-    }
-    .patient-item:hover, .patient-item.active { background: #eff6ff; border-left: 4px solid var(--primary); }
-    .patient-item small { display: block; color: #666; margin-top: 4px; font-size: 0.8rem; }
-    
-    /* ÁREA DE CONTEÚDO */
-    main {
-        flex: 1;
-        padding: 30px;
-        overflow-y: auto;
-        background: #f8fafc;
-    }
-
-    .card {
-        background: white; border-radius: 8px; padding: 25px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;
-        border: 1px solid var(--border);
-    }
-
-    /* INPUTS E BOTÕES */
-    input, textarea, select {
-        width: 100%; padding: 10px; margin: 5px 0 15px 0;
-        border: 1px solid var(--border); border-radius: 6px;
-        font-family: inherit; font-size: 0.95rem;
-    }
-    textarea { min-height: 100px; resize: vertical; }
-
-    button {
-        background: var(--primary); color: white; border: none;
-        padding: 10px 20px; border-radius: 6px; cursor: pointer;
-        font-weight: 600; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px;
-    }
-    button:hover { background: var(--secondary); transform: translateY(-1px); }
-    button.secondary { background: white; color: var(--text); border: 1px solid var(--border); }
-    button.secondary:hover { background: #f3f4f6; }
-    button.danger { background: var(--danger); color: white; }
-    
-    /* ABAS */
-    .tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
-    .tab { padding: 10px 0; cursor: pointer; opacity: 0.6; border-bottom: 3px solid transparent; font-weight: 500; }
-    .tab.active { opacity: 1; border-bottom-color: var(--primary); color: var(--primary); }
-
-    /* INFO PESSOAL HEADER */
-    .personal-info {
-        display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;
-        background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px;
-    }
-    .info-group label { font-size: 0.75rem; color: #64748b; font-weight: bold; text-transform: uppercase; }
-    .info-group div { font-weight: 500; }
-
-    /* MODAL */
-    .modal {
-        display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-        background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;
-    }
-    .modal-content { background: white; padding: 30px; border-radius: 12px; width: 500px; max-width: 90%; }
-
-    .tag-extra { background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 5px; display: inline-block; }
-
     .hidden { display: none !important; }
+    .flex { display: flex; align-items: center; }
+    .gap-10 { gap: 10px; }
+    
+    /* --- LOGIN --- */
+    #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
+    .login-box { background: white; padding: 3rem; border-radius: 16px; text-align: center; width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+    .input-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
+    .input-wrapper input { width: 100%; padding: 15px; padding-right: 45px; text-align: center; font-size: 1.2rem; border: 2px solid #e2e8f0; border-radius: 8px; margin-bottom: 0; }
+    .input-wrapper input:focus { border-color: var(--secondary); }
+    .eye-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; color: #64748b; user-select: none; }
+    .shake { animation: shake 0.4s linear; border-color: var(--danger) !important; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    /* --- HEADER --- */
+    header { background: #fff; border-bottom: 2px solid var(--primary); padding: 0 15px; height: 70px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 800; font-size: 1.4rem; color: var(--primary); display:flex; align-items:center; gap:10px; }
+    
+    .top-btn { padding: 8px 15px; border-radius: 6px; border: 1px solid #ccc; background: #f8f9fa; cursor: pointer; font-weight: 600; display:flex; align-items:center; gap:5px; transition:0.2s; }
+    .top-btn:hover { background: #e9ecef; transform: translateY(-1px); }
+    .btn-sync { background: #dcfce7; border-color: #86efac; color: #166534; }
+    .btn-backup { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+    .btn-import { background: #ffedd5; border-color: #fdba74; color: #9a3412; }
+
+    /* --- LAYOUT --- */
+    .main-container { display: flex; flex: 1; overflow: hidden; }
+    aside { width: 280px; background: #fff; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+    main { flex: 1; padding: 20px; overflow-y: auto; background: var(--bg); }
+    
+    .nav-tabs { display: flex; border-bottom: 1px solid var(--border); }
+    .nav-btn { flex: 1; padding: 15px; border: none; background: #f1f5f9; cursor: pointer; font-weight: 600; color: #64748b; }
+    .nav-btn.active { background: #fff; color: var(--primary); border-top: 4px solid var(--primary); }
+    
+    .sidebar-content { flex: 1; overflow-y: auto; padding: 10px; }
+    .patient-item { padding: 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+    .patient-item:hover { background: #f8fafc; }
+    .patient-item.active { background: #eff6ff; color: var(--primary); font-weight: bold; border-left: 4px solid var(--primary); }
+    
+    .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); }
+    
+    button { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    button.secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+    button.danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    
+    /* BOTÃO FREUD */
+    .btn-freud { background: linear-gradient(135deg, #4c1d95, #6d28d9); color: white; border: 1px solid #5b21b6; box-shadow: 0 4px 6px rgba(76, 29, 149, 0.3); font-family: 'Georgia', serif; font-style: italic; }
+    .btn-freud:hover { transform: scale(1.02); box-shadow: 0 6px 12px rgba(76, 29, 149, 0.4); }
+
+    input, select, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+
+    /* --- MODAIS --- */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; align-items: center; justify-content: center; }
+    .modal-box { background: white; padding: 25px; border-radius: 12px; width: 600px; max-width: 95%; max-height: 90vh; overflow-y: auto; }
+
+    /* --- IMPRESSÃO --- */
+    #printArea { display: none; }
+    @media print {
+        body * { visibility: hidden; }
+        #printArea, #printArea * { visibility: visible; }
+        #printArea { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; padding: 40px; background: white; color: black; }
+        header, aside, main, #loginScreen, .modal-overlay { display: none !important; }
+    }
+    .laudo-header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 30px; padding-bottom: 10px; }
+    .laudo-body { font-size: 14pt; line-height: 1.6; text-align: justify; margin-bottom: 50px; min-height: 400px; }
+    .laudo-footer { text-align: center; margin-top: 50px; }
+    .laudo-signature { border-top: 1px solid #000; display: inline-block; padding-top: 5px; width: 300px; margin-top: 50px; }
 </style>
 </head>
 <body>
 
 <div id="loginScreen">
-    <div class="login-box">
-        <h2 style="color:var(--primary); margin:0 0 10px 0;">PsiManager 3.0</h2>
-        <p style="margin-bottom:20px; color:#666;">Acesso Exclusivo Dra. Deny</p>
-        <input type="password" id="loginPass" placeholder="Senha Mestra">
-        <button onclick="fazerLogin()" style="width:100%; justify-content:center;">Entrar</button>
-        <p id="loginMsg" style="color:red; font-size:0.8rem; margin-top:10px;"></p>
+    <div class="login-box" id="loginBox">
+        <h2 style="color:var(--primary);">PsiManager v6.6</h2>
+        <p style="color:#64748b; margin-bottom:15px;">Acesso Seguro</p>
+        
+        <div class="input-wrapper">
+            <input type="password" id="loginPass" placeholder="Senha Mestra" onkeydown="if(event.key==='Enter') fazerLogin()">
+            <span class="eye-icon" onclick="togglePass()">👁️</span>
+        </div>
+        
+        <button onclick="fazerLogin()" style="width:100%; padding:15px; font-size:1.1rem;">ENTRAR</button>
+        <p id="loginMsg" style="color:var(--danger); margin-top:15px; font-weight:bold; min-height:20px;"></p>
     </div>
 </div>
 
 <header>
-    <div style="font-weight:bold; font-size:1.2rem; color:var(--primary);">PsiManager <span style="font-weight:normal; font-size:0.9rem; color:#666;">v3.0</span></div>
-    <div style="display:flex; gap: 10px;">
-        <button class="secondary" onclick="exportarBackup()">💾 Backup (JSON)</button>
-        <button class="secondary" onclick="triggerImport('csv')">📄 Importar Planilha (CSV)</button>
-        <button class="secondary" onclick="triggerImport('json')">📂 Restaurar Backup</button>
-        <button class="secondary" onclick="abrirConfig()">⚙️</button>
-        <button class="danger" onclick="logout()" style="padding: 10px;">🔒</button>
+    <div class="logo">🧠 PsiManager</div>
+    <div class="flex gap-10">
+        <button onclick="sincronizarNuvem()" id="btnSync" class="top-btn btn-sync">☁️ Sincronizar</button>
+        <button onclick="exportarBackup()" class="top-btn btn-backup">💾 Backup</button>
+        <button onclick="triggerImport()" class="top-btn btn-import">📂 Importar</button>
+        <button onclick="abrirConfig()" class="top-btn">⚙️</button>
+        <button onclick="logout()" class="danger" style="padding: 8px 12px;">🔒</button>
     </div>
 </header>
 
 <div class="main-container">
-    <aside>
-        <div class="search-bar">
-            <input type="text" id="buscaInput" placeholder="Buscar paciente..." onkeyup="filtrarPacientes()" style="margin-bottom:10px;">
-            <button onclick="adicionarPaciente()" style="width:100%; justify-content:center;">+ Novo Paciente</button>
+    <aside id="sidebar">
+        <div class="nav-tabs">
+            <button class="nav-btn active" onclick="navSidebar('pacientes')">Pacientes</button>
+            <button class="nav-btn" onclick="navSidebar('agenda')">Agenda</button>
         </div>
-        <div class="patient-list" id="listaPacientes"></div>
+        <div id="sidePacientes" class="sidebar-content">
+            <input type="text" id="buscaInput" placeholder="🔍 Buscar..." onkeyup="renderListaPacientes()" style="margin-bottom:10px;">
+            <button onclick="adicionarPacienteManual()" class="secondary" style="width:100%; margin-bottom:10px;">+ Novo Paciente</button>
+            <div id="listaPacientes"></div>
+        </div>
+        <div id="sideAgenda" class="sidebar-content hidden">
+            <button onclick="modalAgendamento()" class="secondary" style="width:100%; margin-bottom:15px;">+ Agendar</button>
+            <div id="listaAgendaSidebar"></div>
+        </div>
     </aside>
 
     <main id="areaTrabalho">
-        <div id="emptyState" style="text-align:center; padding-top:100px; color:#94a3b8;">
-            <div style="font-size:3rem; margin-bottom:20px;">👩‍⚕️</div>
-            <h2>Selecione um paciente</h2>
-            <p>Seus dados estão protegidos com criptografia local.</p>
+        <div id="emptyState" style="text-align:center; padding-top:80px; color:#94a3b8;">
+            <div style="font-size:4rem; margin-bottom:10px;">📄</div>
+            <h2>Prontuário Digital</h2>
+            <p>Selecione um paciente ou importe uma planilha.</p>
+            <button onclick="abrirFinanceiro()" class="secondary" style="margin-top:20px;">Ver Financeiro</button>
         </div>
 
-        <div id="pacienteView" class="hidden">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div id="viewDashboard" class="hidden">
+            <h2 style="color:var(--primary);">Financeiro</h2>
+            <div class="flex gap-10" style="margin-bottom:20px;">
+                <div class="card" style="flex:1; border-left:5px solid var(--success);">
+                    <small>RECEBIDO (MÊS)</small>
+                    <div style="font-size:1.5rem; font-weight:bold; color:var(--success);" id="dashFaturado">R$ 0,00</div>
+                </div>
+                <div class="card" style="flex:1; border-left:5px solid var(--warning);">
+                    <small>A RECEBER</small>
+                    <div style="font-size:1.5rem; font-weight:bold; color:var(--warning);" id="dashPendente">R$ 0,00</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="flex" style="justify-content:space-between; margin-bottom:15px;">
+                    <h3>Lançamentos</h3>
+                    <button onclick="modalFinanceiro()">+ Novo</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="min-width:500px;">
+                        <thead><tr><th>Data</th><th>Paciente</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+                        <tbody id="tabelaFinanceira"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewPaciente" class="hidden">
+            <div class="flex" style="justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
                 <h1 id="tituloPaciente" style="margin:0; color:var(--primary);">Nome</h1>
-                <button class="secondary" onclick="excluirPaciente()" style="font-size:0.8rem; color:var(--danger); border-color:var(--danger);">Excluir Paciente</button>
-            </div>
-
-            <div class="personal-info">
-                <div class="info-group">
-                    <label>Data Nascimento</label>
-                    <input type="date" id="infoNascimento" onchange="salvarDadosPessoais()">
-                </div>
-                <div class="info-group">
-                    <label>Telefone</label>
-                    <input type="text" id="infoTelefone" placeholder="(00) 00000-0000" onchange="salvarDadosPessoais()">
-                </div>
-                <div class="info-group">
-                    <label>E-mail</label>
-                    <input type="text" id="infoEmail" placeholder="email@exemplo.com" onchange="salvarDadosPessoais()">
+                <div class="flex gap-10">
+                    <button onclick="acionarFreud()" class="btn-freud">🎩 Consultar Freud</button>
+                    <button onclick="modalLaudo()" style="background:#4b5563;">🖨️ Documentos</button>
+                    <button class="secondary" onclick="abrirFinanceiro()">💰 $</button>
+                    <button class="danger secondary" onclick="excluirPaciente()">🗑</button>
                 </div>
             </div>
-
-            <div class="tabs">
-                <div class="tab active" onclick="mudarAba('anamnese')">Anamnese</div>
-                <div class="tab" onclick="mudarAba('sessoes')">Sessões Clínicas</div>
-            </div>
-
-            <div id="tabAnamnese">
-                <div class="card">
-                    <h3 style="margin-top:0;">Anamnese Principal</h3>
-                    <div id="camposAnamnese"></div>
+            <div class="card">
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
+                    <div><small>TELEFONE</small><input type="text" id="infoTelefone" onchange="salvarDadosPessoais()"></div>
+                    <div><small>E-MAIL</small><input type="text" id="infoEmail" onchange="salvarDadosPessoais()"></div>
                 </div>
-
-                <div id="containerExtras" class="card hidden">
-                    <h3 style="margin-top:0; color:var(--warning);">Outras Informações (Importadas)</h3>
-                    <p style="font-size:0.85rem; color:#666;">Estes campos vieram da planilha e não estão na configuração padrão.</p>
+                <hr style="border:0; border-top:1px solid #eee; margin:15px 0;">
+                <h3 style="color:var(--primary);">Anamnese</h3>
+                <div id="camposAnamnese"></div>
+                <div id="containerExtras" class="hidden" style="background:#fffbf0; padding:10px; border:1px solid #fcd34d; border-radius:6px; margin-top:15px;">
+                    <h4 style="margin:0; color:#b45309;">Dados Importados</h4>
                     <div id="camposExtras"></div>
                 </div>
-                
-                <button onclick="salvarAnamneseAtual()">Salvar Alterações</button>
+                <button onclick="salvarAnamneseAtual()" style="width:100%; margin-top:15px;">Salvar Dados</button>
             </div>
-
-            <div id="tabSessoes" class="hidden">
-                <div class="card">
-                    <h3 style="margin-top:0;">Nova Sessão</h3>
+            <div class="card">
+                <h3 style="color:var(--primary);">Sessões / Evolução</h3>
+                <div class="flex gap-10">
                     <input type="date" id="dataSessao" style="width:150px;">
-                    <textarea id="textoEvolucao" placeholder="Descreva a evolução..."></textarea>
-                    <button onclick="adicionarSessao()">Registrar Sessão</button>
+                    <button class="secondary" onclick="lancarSessaoFinanceiro()">💲 Cobrar</button>
                 </div>
-                <div id="historicoSessoes"></div>
+                <textarea id="textoEvolucao" placeholder="Evolução..."></textarea>
+                <button onclick="adicionarSessao()">Salvar Sessão</button>
+                <div id="historicoSessoes" style="margin-top:20px;"></div>
             </div>
         </div>
     </main>
 </div>
 
-<div id="modalConfig" class="modal">
-    <div class="modal-content">
-        <h3>Configurar Anamnese</h3>
-        <p>Defina os títulos dos campos (separados por vírgula):</p>
-        <textarea id="configCampos" style="height:100px"></textarea>
-        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
-            <button class="secondary" onclick="fecharConfig()">Cancelar</button>
-            <button onclick="salvarConfig()">Salvar</button>
-        </div>
-    </div>
+<div id="printArea">
+    <div class="laudo-header"><h2>DRA. DENY</h2><p>PSICÓLOGA CLÍNICA - CRP 00/00000</p></div>
+    <div style="margin-bottom: 30px;"><p><strong>Paciente:</strong> <span id="printNome"></span></p><p><strong>Data:</strong> <span id="printData"></span></p></div>
+    <div class="laudo-body"><h3 style="text-align:center; text-transform:uppercase;" id="printTitulo"></h3><div id="printTexto"></div></div>
+    <div class="laudo-footer"><div class="laudo-signature"><strong>Dra. Deny</strong><br>Psicóloga</div></div>
 </div>
 
-<input type="file" id="inputJSON" accept=".json" style="display:none" onchange="processarJSON(this)">
-<input type="file" id="inputCSV" accept=".csv" style="display:none" onchange="processarCSV(this)">
+<div id="modalAgenda" class="modal-overlay"><div class="modal-box"><h3>Novo Agendamento</h3><label>Paciente</label><select id="agendaPaciente"></select><label>Data/Hora</label><input type="datetime-local" id="agendaData"><label>Obs</label><input type="text" id="agendaObs"><div class="flex gap-10" style="justify-content:flex-end;"><button class="secondary" onclick="document.getElementById('modalAgenda').style.display='none'">Cancelar</button><button onclick="salvarAgendamento()">Salvar</button></div></div></div>
+<div id="modalFin" class="modal-overlay"><div class="modal-box"><h3>Lançamento</h3><label>Paciente</label><select id="finPaciente"></select><label>Descrição</label><input type="text" id="finDesc"><div class="flex gap-10"><div><label>Valor</label><input type="number" id="finValor"></div><div><label>Status</label><select id="finStatus"><option value="pago">Pago</option><option value="pendente">Pendente</option></select></div></div><label>Data</label><input type="date" id="finData"><div class="flex gap-10" style="justify-content:flex-end;"><button class="secondary" onclick="document.getElementById('modalFin').style.display='none'">Cancelar</button><button onclick="salvarLancamento()">Salvar</button></div></div></div>
+<div id="modalLaudo" class="modal-overlay"><div class="modal-box" style="width: 800px;"><h3>Emitir Documento</h3><label>Tipo</label><select id="laudoTipo"><option>LAUDO PSICOLÓGICO</option><option>ATESTADO</option><option>ENCAMINHAMENTO</option></select><label>Texto</label><textarea id="laudoTexto" style="height: 300px;"></textarea><div class="flex gap-10" style="justify-content:flex-end;"><button class="secondary" onclick="document.getElementById('modalLaudo').style.display='none'">Fechar</button><button onclick="imprimirDocumento()">🖨️ IMPRIMIR</button></div></div></div>
+<div id="modalConfig" class="modal-overlay"><div class="modal-box"><h3>Configurar</h3><textarea id="configCampos" style="height:100px;"></textarea><div class="flex gap-10" style="justify-content:flex-end;"><button class="secondary" onclick="document.getElementById('modalConfig').style.display='none'">Fechar</button><button onclick="salvarConfig()">Salvar</button></div></div></div>
+
+<input type="file" id="inputFile" style="display:none" onchange="processarImport(this)">
 
 <script>
-// --- ESTADO GLOBAL ---
-let ESTADO = {
-    senha: null,
-    pacientes: {},
-    config: {
-        campos: ["Queixa Principal", "Histórico", "Contexto Familiar", "Avaliação Inicial", "Objetivos"]
-    },
-    pacienteAtual: null
-};
+const API_URL = "https://script.google.com/macros/s/AKfycbzHH4Ct2sIu72O_CB4odDmE8dO88_YXic3BCYZ8p2Lq42hq_GCq9KdpGE42p2a60JHODQ/exec";
+const DB_KEY = "PSI_MANAGER_V6";
+const CAMPOS = ["Queixa Principal", "Histórico", "Medicamentos", "Sono/Alimentação", "Objetivos", "Plano Terapêutico"];
+let ESTADO = { senha: null, pacientes: {}, agenda: [], financeiro: [], config: { campos: CAMPOS }, pacienteAtual: null };
 
-const DB_KEY = "PSI_DENY_V3";
-
-// --- CRIPTOGRAFIA ---
-function criptografar(texto, senha) {
-    if(!texto) return "";
-    let res = "";
-    for (let i = 0; i < texto.length; i++) res += String.fromCharCode(texto.charCodeAt(i) ^ senha.charCodeAt(i % senha.length));
-    return btoa(res);
-}
-function descriptografar(cifrado, senha) {
-    try {
-        let texto = atob(cifrado);
-        let res = "";
-        for (let i = 0; i < texto.length; i++) res += String.fromCharCode(texto.charCodeAt(i) ^ senha.charCodeAt(i % senha.length));
-        return res;
-    } catch(e) { return null; }
-}
-
-// --- PERSISTÊNCIA ---
-function salvarNoDisco() {
-    if(!ESTADO.senha) return;
-    const dados = JSON.stringify({ pacientes: ESTADO.pacientes, config: ESTADO.config });
-    localStorage.setItem(DB_KEY, criptografar(dados, ESTADO.senha));
-}
-
+// --- LOGIN ---
+function togglePass() { const x = document.getElementById("loginPass"); x.type = x.type === "password" ? "text" : "password"; }
 function fazerLogin() {
-    const pass = document.getElementById('loginPass').value;
-    if(!pass) return;
-    const raw = localStorage.getItem(DB_KEY);
+    const p = document.getElementById('loginPass').value;
+    const msg = document.getElementById('loginMsg');
+    const input = document.querySelector('.input-wrapper input');
     
-    if (raw) {
-        const json = descriptografar(raw, pass);
-        if (json) {
-            try {
-                const dados = JSON.parse(json);
-                ESTADO.pacientes = dados.pacientes || {};
-                ESTADO.config = dados.config || ESTADO.config;
-                ESTADO.senha = pass;
-                iniciarApp();
-            } catch(e) { alert("Erro ao ler dados."); }
+    if(!p) { msg.innerText = "Digite sua senha."; input.classList.add('shake'); setTimeout(()=>input.classList.remove('shake'), 400); return; }
+
+    try {
+        let r = localStorage.getItem(DB_KEY);
+        if(!r) {
+            const oldKeys = ["PSI_MANAGER_V5_1", "PSI_MANAGER_V5"];
+            for(let k of oldKeys) { const old = localStorage.getItem(k); if(old) { r = old; break; } }
+        }
+        if(r) {
+            const j = descriptografar(r, p);
+            if(j) {
+                ESTADO = JSON.parse(j);
+                ESTADO.agenda = ESTADO.agenda||[]; ESTADO.financeiro = ESTADO.financeiro||[];
+                ESTADO.senha = p; iniciarApp();
+            } else {
+                msg.innerText = "Senha incorreta."; input.classList.add('shake'); setTimeout(()=>input.classList.remove('shake'), 400);
+            }
         } else {
-            document.getElementById('loginMsg').innerText = "Senha incorreta.";
+            if(confirm("Primeiro acesso (ou dados resetados). Criar nova senha?")) { ESTADO.senha = p; salvarNoDisco(); iniciarApp(); }
         }
-    } else {
-        if(confirm("Criar nova senha mestra?")) {
-            ESTADO.senha = pass;
-            salvarNoDisco();
-            iniciarApp();
-        }
-    }
+    } catch(err) { alert("Erro login: " + err.message); }
 }
 
-function logout() { location.reload(); }
+// --- IMPORTAÇÃO INTELIGENTE (FIX) ---
+function triggerImport() { document.getElementById('inputFile').click(); }
+function processarImport(input) {
+    const file = input.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const content = e.target.result;
+        try { // JSON
+            const json = JSON.parse(content);
+            if(json.pacientes) {
+                if(confirm("Restaurar backup completo?")) { ESTADO = json; ESTADO.senha = document.getElementById('loginPass').value || ESTADO.senha; salvarNoDisco(); location.reload(); }
+            } else if(json.tipo === "FICHA_PACIENTE_PSI_DENY") { alert("Use 'Sincronizar' para fichas."); }
+            return;
+        } catch(err) { }
+        try { // CSV
+            const lines = content.split(/\r?\n/).filter(l => l.trim().length > 0);
+            if (lines.length < 2) return alert("Arquivo vazio.");
+            const separator = (lines[0].match(/;/g)||[]).length > (lines[0].match(/,/g)||[]).length ? ';' : ',';
+            const headers = parseCSVLine(lines[0], separator).map(h => h.toLowerCase().trim());
+            
+            // PRIORIDADE: "Nome Completo" > "Nome" (sem usuario) > "Nome"
+            let idxNome = headers.findIndex(h => h.includes("nome completo"));
+            if(idxNome === -1) idxNome = headers.findIndex(h => (h.includes("nome") || h.includes("paciente")) && !h.includes("usuario") && !h.includes("usuário"));
+            if(idxNome === -1) idxNome = headers.findIndex(h => h.includes("nome"));
 
-function iniciarApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    renderLista();
-    atualizarCamposDinamicos();
+            const idxTel = headers.findIndex(h => h.includes("fone") || h.includes("celular") || h.includes("whatsapp"));
+            const idxEmail = headers.findIndex(h => h.includes("email"));
+            
+            if(idxNome === -1) return alert("Não encontrei coluna 'Nome' na planilha.");
+            
+            let count = 0;
+            for(let i=1; i<lines.length; i++) {
+                const cols = parseCSVLine(lines[i], separator);
+                const nome = cols[idxNome];
+                if(nome && nome.length > 2) {
+                    if(!ESTADO.pacientes[nome]) ESTADO.pacientes[nome] = {cadastro:new Date().toISOString(), anamnese:{}, sessoes:[]};
+                    const p = ESTADO.pacientes[nome];
+                    if(idxTel > -1) p.telefone = cols[idxTel];
+                    if(idxEmail > -1) p.email = cols[idxEmail];
+                    headers.forEach((h, idx) => { if(![idxNome, idxTel, idxEmail].includes(idx) && cols[idx]) p.anamnese[lines[0].split(separator)[idx]] = cols[idx]; });
+                    count++;
+                }
+            }
+            salvarNoDisco(); renderListaPacientes(); alert(`Sucesso! ${count} pacientes importados.`);
+        } catch(e) { alert("Erro ao ler CSV: " + e.message); }
+    };
+    reader.readAsText(file); input.value = "";
 }
-
-// --- CSV PARSER (O SEGREDO DA IMPORTAÇÃO) ---
-function parseCSVLine(text) {
-    let res = [], cur = '', inQuote = false;
-    for (let i=0; i<text.length; i++) {
-        let c = text[i], n = text[i+1];
-        if (c === '"') {
-            if (inQuote && n === '"') { cur += '"'; i++; }
-            else inQuote = !inQuote;
-        } else if (c === ',' && !inQuote) {
-            res.push(cur); cur = '';
-        } else { cur += c; }
+function parseCSVLine(line, separator) {
+    const res = []; let cur = ''; let inQuote = false;
+    for (let i=0; i<line.length; i++) {
+        let c = line[i];
+        if (c === '"') { inQuote = !inQuote; }
+        else if (c === separator && !inQuote) { res.push(cur.replace(/^"|"$/g, '').trim()); cur = ''; }
+        else { cur += c; }
     }
-    res.push(cur);
+    res.push(cur.replace(/^"|"$/g, '').trim());
     return res;
 }
 
-function processarCSV(input) {
-    const file = input.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        const text = e.target.result;
-        const lines = text.split(/\r?\n/);
-        const headers = parseCSVLine(lines[0]);
-        
-        let count = 0;
-        
-        // Mapeamento Inteligente
-        let idxNome = headers.findIndex(h => h.includes("Nome Completo"));
-        if(idxNome === -1) idxNome = headers.findIndex(h => h.toLowerCase().includes("nome"));
-        
-        let idxTel = headers.findIndex(h => h.includes("Telefone") || h.includes("Fone"));
-        let idxEmail = headers.findIndex(h => h.toLowerCase().includes("e-mail") || h.toLowerCase().includes("email"));
-        let idxNasc = headers.findIndex(h => h.match(/\d{4}|nascimento/i) || h.includes("1976")); // Pega a coluna estranha de data
-
-        if (idxNome === -1) return alert("Não encontrei a coluna 'Nome Completo' no CSV.");
-
-        for (let i=1; i<lines.length; i++) {
-            if(!lines[i].trim()) continue;
-            const cols = parseCSVLine(lines[i]);
-            const nome = cols[idxNome].trim();
-            if(!nome) continue;
-
-            if(!ESTADO.pacientes[nome]) {
-                ESTADO.pacientes[nome] = { cadastro: new Date().toISOString(), anamnese: {}, sessoes: [] };
-            }
-
-            // Salva dados pessoais
-            if(idxTel > -1) ESTADO.pacientes[nome].telefone = cols[idxTel];
-            if(idxEmail > -1) ESTADO.pacientes[nome].email = cols[idxEmail];
-            if(idxNasc > -1) ESTADO.pacientes[nome].nascimento = cols[idxNasc]; // Formato ISO já vem no CSV geralmente
-
-            // Salva o resto na anamnese
-            headers.forEach((h, idx) => {
-                if([idxNome, idxTel, idxEmail, idxNasc].includes(idx)) return; // Pula os já usados
-                if(cols[idx]) ESTADO.pacientes[nome].anamnese[h] = cols[idx];
-            });
-            count++;
-        }
-        
-        salvarNoDisco();
-        renderLista();
-        alert(`${count} pacientes importados com sucesso!`);
-    };
-    reader.readAsText(file);
-    input.value = "";
-}
-
-// --- LÓGICA DO APP ---
-function renderLista() {
-    const lista = document.getElementById('listaPacientes');
-    const termo = document.getElementById('buscaInput').value.toLowerCase();
-    lista.innerHTML = "";
-    Object.keys(ESTADO.pacientes).sort().forEach(nome => {
-        if(nome.toLowerCase().includes(termo)) {
-            const div = document.createElement('div');
-            div.className = `patient-item ${ESTADO.pacienteAtual===nome?'active':''}`;
-            div.innerHTML = `<strong>${nome}</strong><small>${ESTADO.pacientes[nome].telefone || 'Sem telefone'}</small>`;
-            div.onclick = () => abrirPaciente(nome);
-            lista.appendChild(div);
-        }
-    });
-}
-
-function filtrarPacientes() { renderLista(); }
-
-function abrirPaciente(nome) {
-    ESTADO.pacienteAtual = nome;
-    document.getElementById('emptyState').classList.add('hidden');
-    document.getElementById('pacienteView').classList.remove('hidden');
-    document.getElementById('tituloPaciente').innerText = nome;
-    
-    // Preenche dados pessoais
-    const p = ESTADO.pacientes[nome];
-    document.getElementById('infoTelefone').value = p.telefone || "";
-    document.getElementById('infoEmail').value = p.email || "";
-    document.getElementById('infoNascimento').value = p.nascimento ? p.nascimento.split("T")[0] : "";
-
-    mudarAba('anamnese');
-    renderLista(); // Atualiza seleção visual
-}
-
-function mudarAba(aba) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('#tabAnamnese, #tabSessoes').forEach(d => d.classList.add('hidden'));
-    
-    if (aba === 'anamnese') {
-        document.querySelectorAll('.tab')[0].classList.add('active');
-        document.getElementById('tabAnamnese').classList.remove('hidden');
-        renderAnamnese();
-    } else {
-        document.querySelectorAll('.tab')[1].classList.add('active');
-        document.getElementById('tabSessoes').classList.remove('hidden');
-        renderSessoes();
-    }
-}
-
-function renderAnamnese() {
-    const dados = ESTADO.pacientes[ESTADO.pacienteAtual].anamnese || {};
-    
-    // Campos da Configuração
-    atualizarCamposDinamicos(); // Reseta os textareas
-    document.querySelectorAll('#camposAnamnese textarea').forEach(area => {
-        area.value = dados[area.dataset.campo] || "";
-    });
-
-    // Campos Extras (Importados)
-    const containerExtras = document.getElementById('containerExtras');
-    const areaExtras = document.getElementById('camposExtras');
-    areaExtras.innerHTML = "";
-    
-    const chavesConfig = new Set(ESTADO.config.campos);
-    const chavesDados = Object.keys(dados);
-    let temExtras = false;
-
-    chavesDados.forEach(chave => {
-        if (!chavesConfig.has(chave) && dados[chave]) {
-            temExtras = true;
-            const label = document.createElement('div');
-            label.className = "tag-extra";
-            label.innerText = chave; // Nome da coluna no CSV
-
-            const input = document.createElement('textarea');
-            input.value = dados[chave];
-            input.dataset.campoExtra = chave; // Para salvar depois
-            input.style.borderColor = "#fed7aa";
-
-            areaExtras.appendChild(label);
-            areaExtras.appendChild(input);
-        }
-    });
-
-    if(temExtras) containerExtras.classList.remove('hidden');
-    else containerExtras.classList.add('hidden');
-}
-
-function atualizarCamposDinamicos() {
-    const container = document.getElementById('camposAnamnese');
-    container.innerHTML = "";
-    ESTADO.config.campos.forEach(campo => {
-        const label = document.createElement('label');
-        label.innerText = campo;
-        label.style.fontWeight = "600"; label.style.display="block"; label.style.marginTop="10px";
-        const area = document.createElement('textarea');
-        area.dataset.campo = campo;
-        container.appendChild(label);
-        container.appendChild(area);
-    });
-}
-
-function salvarDadosPessoais() {
+// --- FREUD AI PROMPT (MASTER) ---
+function acionarFreud() {
     if(!ESTADO.pacienteAtual) return;
     const p = ESTADO.pacientes[ESTADO.pacienteAtual];
-    p.telefone = document.getElementById('infoTelefone').value;
-    p.email = document.getElementById('infoEmail').value;
-    p.nascimento = document.getElementById('infoNascimento').value;
-    salvarNoDisco();
-}
-
-function salvarAnamneseAtual() {
-    if(!ESTADO.pacienteAtual) return;
-    const novosDados = { ...ESTADO.pacientes[ESTADO.pacienteAtual].anamnese };
-
-    // Salva campos padrão
-    document.querySelectorAll('#camposAnamnese textarea').forEach(area => {
-        novosDados[area.dataset.campo] = area.value;
-    });
-
-    // Salva campos extras (caso editados)
-    document.querySelectorAll('#camposExtras textarea').forEach(area => {
-        novosDados[area.dataset.campoExtra] = area.value;
-    });
-
-    ESTADO.pacientes[ESTADO.pacienteAtual].anamnese = novosDados;
-    salvarNoDisco();
-    alert("Anamnese atualizada! ✅");
-}
-
-function adicionarSessao() {
-    const data = document.getElementById('dataSessao').value;
-    const texto = document.getElementById('textoEvolucao').value;
-    if(!data || !texto) return alert("Preencha data e evolução.");
-
-    ESTADO.pacientes[ESTADO.pacienteAtual].sessoes.push({ data, texto });
-    // Ordena
-    ESTADO.pacientes[ESTADO.pacienteAtual].sessoes.sort((a,b) => new Date(b.data) - new Date(a.data));
     
-    salvarNoDisco();
-    document.getElementById('textoEvolucao').value = "";
-    renderSessoes();
-}
+    let prompt = `Aja como SIGMUND FREUD, o pai da Psicanálise. Eu sou a Dra. Deny, e este é um caso clínico.\n\n`;
+    prompt += `INSTRUÇÕES:\n1. Analise os dados abaixo usando os conceitos de Psicanálise Clássica (Inconsciente, Pulsões, Recalque, Mecanismos de Defesa, Complexo de Édipo, etc.).\n`;
+    prompt += `2. Formule hipóteses sobre a Estrutura Clínica (Neurose, Psicose, Perversão) se houver elementos suficientes.\n`;
+    prompt += `3. Sugira caminhos para a Associação Livre e possíveis interpretações de sonhos ou atos falhos.\n`;
+    prompt += `4. Mantenha o tom analítico, profundo e acolhedor, mas tecnicamente rigoroso.\n\n`;
+    prompt += `DADOS DO PACIENTE (ANÔNIMO):\n`;
+    
+    // Dados Cadastrais Básicos
+    if(p.nascimento) prompt += `- Idade Aproximada: Baseada em ${p.nascimento}\n`;
+    
+    // Anamnese
+    const todosDados = {...p.anamnese};
+    for(let k in todosDados) {
+        if(todosDados[k]) prompt += `- ${k}: ${todosDados[k]}\n`;
+    }
+    
+    // Sessões Recentes (Últimas 3 para contexto)
+    if(p.sessoes && p.sessoes.length > 0) {
+        prompt += `\nÚLTIMAS ANOTAÇÕES DE SESSÃO:\n`;
+        p.sessoes.slice(0, 3).forEach(s => prompt += `[${s.data}] ${s.texto}\n`);
+    }
 
-function renderSessoes() {
-    const lista = ESTADO.pacientes[ESTADO.pacienteAtual].sessoes || [];
-    const div = document.getElementById('historicoSessoes');
-    div.innerHTML = "";
-    lista.forEach(s => {
-        div.innerHTML += `
-            <div style="background:white; padding:15px; border-radius:8px; border-left:4px solid var(--primary); margin-bottom:15px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-                <div style="font-weight:bold; color:var(--primary); margin-bottom:5px;">${new Date(s.data).toLocaleDateString('pt-BR')}</div>
-                <div style="white-space:pre-wrap;">${s.texto}</div>
-            </div>`;
+    prompt += `\nHerr Freud, qual a sua análise sobre este caso?`;
+
+    // Copia e Abre
+    navigator.clipboard.writeText(prompt).then(() => {
+        if(confirm("Os dados foram formatados para o 'Modo Freud'.\n\nO prompt está copiado na memória.\nDeseja abrir o ChatGPT agora para colar?")) {
+            window.open("https://chatgpt.com", "_blank");
+        }
     });
 }
 
-function adicionarPaciente() {
-    const nome = prompt("Nome do Paciente:");
-    if(nome && !ESTADO.pacientes[nome]) {
-        ESTADO.pacientes[nome] = { cadastro: new Date().toISOString(), anamnese:{}, sessoes:[] };
-        salvarNoDisco();
-        renderLista();
-        abrirPaciente(nome);
-    } else if(ESTADO.pacientes[nome]) alert("Paciente já existe.");
+// --- SYNC ---
+function sincronizarNuvem() {
+    const b = document.getElementById('btnSync'); const t = b.innerHTML; b.innerHTML="🔄 ..."; b.disabled=true;
+    fetch(API_URL).then(r=>r.json()).then(d => {
+        let n=0;
+        if(d.pacientes) d.pacientes.forEach(i => {
+            const nome = i.dados.nome ? i.dados.nome.trim() : ""; if(!nome) return;
+            if(!ESTADO.pacientes[nome]) { ESTADO.pacientes[nome]={cadastro:new Date().toISOString(), anamnese:{}, sessoes:[]}; n++; }
+            const p = ESTADO.pacientes[nome];
+            p.telefone=i.dados.telefone||p.telefone; p.email=i.dados.email||p.email;
+            if(i.dados.respostas) for(const[k,v] of Object.entries(i.dados.respostas)) if(!p.anamnese[k]) p.anamnese[k]=v;
+        });
+        if(d.agenda && Array.isArray(d.agenda) && d.agenda.length > 0) ESTADO.agenda = d.agenda;
+        salvarNoDisco(); renderListaPacientes(); renderAgendaSidebar();
+        alert(n>0 ? `Sync: ${n} novos!` : "Tudo atualizado.");
+    }).catch(e=>alert("Erro Conexão")).finally(()=>{b.disabled=false; b.innerHTML=t;});
 }
+function enviarAgendaNuvem() { fetch(API_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ tipo: "SYNC_AGENDA", agenda: ESTADO.agenda }) }).catch(console.error); }
+function criptografar(t,s){let r="";for(let i=0;i<t.length;i++)r+=String.fromCharCode(t.charCodeAt(i)^s.charCodeAt(i%s.length));return btoa(r)}
+function descriptografar(t,s){try{let d=atob(t),r="";for(let i=0;i<d.length;i++)r+=String.fromCharCode(d.charCodeAt(i)^s.charCodeAt(i%s.length));return r}catch(e){return null}}
+function salvarNoDisco(){if(ESTADO.senha)localStorage.setItem(DB_KEY,criptografar(JSON.stringify(ESTADO),ESTADO.senha))}
+function iniciarApp(){document.getElementById('loginScreen').style.display='none';renderListaPacientes();renderAgendaSidebar();}
+function logout(){location.reload()}
 
-function excluirPaciente() {
-    if(confirm(`Tem certeza que deseja apagar ${ESTADO.pacienteAtual}?`)) {
-        delete ESTADO.pacientes[ESTADO.pacienteAtual];
-        ESTADO.pacienteAtual = null;
-        salvarNoDisco();
-        renderLista();
-        document.getElementById('pacienteView').classList.add('hidden');
-        document.getElementById('emptyState').classList.remove('hidden');
-    }
+// --- UI LOGIC ---
+function navSidebar(tab) {
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('sidePacientes').classList.add('hidden'); document.getElementById('sideAgenda').classList.add('hidden');
+    if(tab==='pacientes') { document.getElementById('sidePacientes').classList.remove('hidden'); document.querySelectorAll('.nav-btn')[0].classList.add('active'); }
+    else { document.getElementById('sideAgenda').classList.remove('hidden'); document.querySelectorAll('.nav-btn')[1].classList.add('active'); renderAgendaSidebar(); }
 }
-
-// --- IMPORTAR/EXPORTAR ---
-function triggerImport(type) {
-    if(type === 'csv') document.getElementById('inputCSV').click();
-    else document.getElementById('inputJSON').click();
+function modalAgendamento() {
+    const s = document.getElementById('agendaPaciente'); s.innerHTML="";
+    Object.keys(ESTADO.pacientes).sort().forEach(n=>s.innerHTML+=`<option value="${n}">${n}</option>`);
+    document.getElementById('agendaData').value=""; document.getElementById('agendaObs').value="";
+    document.getElementById('modalAgenda').style.display='flex';
 }
-function exportarBackup() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({pacientes: ESTADO.pacientes, config:ESTADO.config}));
-    const el = document.createElement('a');
-    el.href = dataStr;
-    el.download = "Backup_Psi_Deny.json";
-    el.click();
+function salvarAgendamento() {
+    const p=document.getElementById('agendaPaciente').value, d=document.getElementById('agendaData').value, o=document.getElementById('agendaObs').value;
+    if(!p||!d) return alert("Erro");
+    ESTADO.agenda.push({id:Date.now(), paciente:p, data:d, obs:o});
+    ESTADO.agenda.sort((a,b)=>new Date(a.data)-new Date(b.data));
+    salvarNoDisco(); enviarAgendaNuvem(); document.getElementById('modalAgenda').style.display='none'; renderAgendaSidebar();
 }
-function processarJSON(input) {
-    const file = input.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        try {
-            const d = JSON.parse(e.target.result);
-            if(d.pacientes) {
-                if(confirm("Substituir dados atuais pelo backup?")) {
-                    ESTADO.pacientes = d.pacientes;
-                    ESTADO.config = d.config || ESTADO.config;
-                    salvarNoDisco();
-                    logout(); // Relogar para aplicar
-                }
-            }
-        } catch(err) { alert("Arquivo de backup inválido."); }
-    };
-    reader.readAsText(file);
+function renderAgendaSidebar() {
+    const d=document.getElementById('listaAgendaSidebar'); d.innerHTML="";
+    const now=new Date(); now.setHours(0,0,0,0);
+    ESTADO.agenda.filter(a=>new Date(a.data)>=now).forEach(a=>{
+        const dt=new Date(a.data); d.innerHTML+=`<div class="agenda-mini-item"><b>${dt.toLocaleDateString()} ${dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</b><br>${a.paciente}<br><small>${a.obs}</small><br><button class="danger" style="font-size:0.7rem; padding:2px 5px; margin-top:5px;" onclick="delAgenda(${a.id})">Cancelar</button></div>`;
+    });
 }
-
-// Configs UI
-function abrirConfig() { 
-    document.getElementById('configCampos').value = ESTADO.config.campos.join(", ");
-    document.getElementById('modalConfig').style.display = 'flex';
+function delAgenda(id){ if(confirm("Cancelar?")){ESTADO.agenda=ESTADO.agenda.filter(a=>a.id!==id); salvarNoDisco(); enviarAgendaNuvem(); renderAgendaSidebar();} }
+function abrirFinanceiro() {
+    document.getElementById('emptyState').classList.add('hidden'); document.getElementById('viewPaciente').classList.add('hidden'); document.getElementById('viewDashboard').classList.remove('hidden');
+    renderFinTable();
 }
-function fecharConfig() { document.getElementById('modalConfig').style.display = 'none'; }
-function salvarConfig() {
-    ESTADO.config.campos = document.getElementById('configCampos').value.split(',').map(s=>s.trim()).filter(s=>s);
-    salvarNoDisco();
-    fecharConfig();
-    alert("Configuração salva!");
-    location.reload();
+function modalFinanceiro(n,desc) {
+    const s=document.getElementById('finPaciente'); s.innerHTML=`<option value="Avulso">--Avulso--</option>`;
+    Object.keys(ESTADO.pacientes).sort().forEach(p=>s.innerHTML+=`<option value="${p}" ${p===n?'selected':''}>${p}</option>`);
+    document.getElementById('finDesc').value=desc||""; document.getElementById('finValor').value=""; document.getElementById('finData').valueAsDate=new Date();
+    document.getElementById('modalFin').style.display='flex';
 }
-
+function salvarLancamento() {
+    const p=document.getElementById('finPaciente').value, ds=document.getElementById('finDesc').value, v=parseFloat(document.getElementById('finValor').value), s=document.getElementById('finStatus').value, dt=document.getElementById('finData').value;
+    if(!ds||isNaN(v)||!dt) return alert("Erro");
+    ESTADO.financeiro.push({id:Date.now(), paciente:p, descricao:ds, valor:v, status:s, data:dt});
+    ESTADO.financeiro.sort((a,b)=>new Date(b.data)-new Date(a.data));
+    salvarNoDisco(); document.getElementById('modalFin').style.display='none'; renderFinTable();
+}
+function renderFinTable() {
+    const tb=document.getElementById('tabelaFinanceira'); tb.innerHTML="";
+    let fat=0, pen=0; const m=new Date().getMonth();
+    ESTADO.financeiro.forEach(f=>{
+        const d=new Date(f.data); if(d.getMonth()===m){f.status==='pago'?fat+=f.valor:pen+=f.valor;}
+        tb.innerHTML+=`<tr><td>${d.toLocaleDateString()}</td><td>${f.paciente}</td><td>R$ ${f.valor.toFixed(2)}</td><td>${f.status}</td><td><button class="danger" onclick="delFin(${f.id})">x</button></td></tr>`;
+    });
+    document.getElementById('dashFaturado').innerText=`R$ ${fat.toFixed(2)}`; document.getElementById('dashPendente').innerText=`R$ ${pen.toFixed(2)}`;
+}
+function delFin(id){ if(confirm("Excluir?")){ESTADO.financeiro=ESTADO.financeiro.filter(f=>f.id!==id); salvarNoDisco(); renderFinTable();} }
+function lancarSessaoFinanceiro(){ modalFinanceiro(ESTADO.pacienteAtual, "Sessão Terapia"); }
+function renderListaPacientes() {
+    const l=document.getElementById('listaPacientes'), f=document.getElementById('buscaInput').value.toLowerCase(); l.innerHTML="";
+    Object.keys(ESTADO.pacientes).sort().forEach(n=>{
+        if(n.toLowerCase().includes(f)) {
+            const d=document.createElement('div'); d.className=`patient-item ${ESTADO.pacienteAtual===n?'active':''}`;
+            d.innerText=n; d.onclick=()=>abrirPaciente(n); l.appendChild(d);
+        }
+    });
+}
+function abrirPaciente(n) {
+    ESTADO.pacienteAtual=n; document.getElementById('emptyState').classList.add('hidden'); document.getElementById('viewDashboard').classList.add('hidden'); document.getElementById('viewPaciente').classList.remove('hidden');
+    document.getElementById('tituloPaciente').innerText=n;
+    const p=ESTADO.pacientes[n]; document.getElementById('infoTelefone').value=p.telefone||""; document.getElementById('infoEmail').value=p.email||"";
+    renderAnamnese(); renderSessoes(); renderListaPacientes();
+}
+function renderAnamnese() {
+    const d=ESTADO.pacientes[ESTADO.pacienteAtual].anamnese||{}, c=document.getElementById('camposAnamnese'); c.innerHTML="";
+    ESTADO.config.campos.forEach(k=>{ c.innerHTML+=`<label>${k}</label><textarea data-campo="${k}">${d[k]||""}</textarea>`; });
+    const ex=document.getElementById('camposExtras'), cn=document.getElementById('containerExtras'); ex.innerHTML=""; let h=false;
+    Object.keys(d).forEach(k=>{ if(!ESTADO.config.campos.includes(k)){ h=true; ex.innerHTML+=`<label style="color:#b45309">${k}</label><textarea data-extra="${k}" style="border-color:#fcd34d">${d[k]}</textarea>`; }});
+    h?cn.classList.remove('hidden'):cn.classList.add('hidden');
+}
+function salvarAnamneseAtual() {
+    const n={...ESTADO.pacientes[ESTADO.pacienteAtual].anamnese};
+    document.querySelectorAll('#camposAnamnese textarea').forEach(e=>n[e.dataset.campo]=e.value);
+    document.querySelectorAll('#camposExtras textarea').forEach(e=>n[e.dataset.extra]=e.value);
+    ESTADO.pacientes[ESTADO.pacienteAtual].anamnese=n; salvarNoDisco(); alert("Salvo");
+}
+function salvarDadosPessoais(){const p=ESTADO.pacientes[ESTADO.pacienteAtual]; p.telefone=document.getElementById('infoTelefone').value; p.email=document.getElementById('infoEmail').value; salvarNoDisco();}
+function adicionarSessao(){ const d=document.getElementById('dataSessao').value, t=document.getElementById('textoEvolucao').value; if(!d||!t)return; ESTADO.pacientes[ESTADO.pacienteAtual].sessoes.push({data:d,texto:t}); salvarNoDisco(); document.getElementById('textoEvolucao').value=""; renderSessoes();}
+function renderSessoes(){ const h=document.getElementById('historicoSessoes'); h.innerHTML=""; ESTADO.pacientes[ESTADO.pacienteAtual].sessoes.forEach(s=>h.innerHTML+=`<div class="card" style="padding:10px; border-left:3px solid var(--primary)"><b>${s.data}</b><br>${s.texto}</div>`); }
+function adicionarPacienteManual(){ const n=prompt("Nome:"); if(n&&!ESTADO.pacientes[n]){ESTADO.pacientes[n]={cadastro:new Date().toISOString(), anamnese:{}, sessoes:[]}; salvarNoDisco(); renderListaPacientes(); abrirPaciente(n);} }
+function excluirPaciente(){ if(confirm("Excluir?")){delete ESTADO.pacientes[ESTADO.pacienteAtual]; ESTADO.pacienteAtual=null; salvarNoDisco(); renderListaPacientes(); document.getElementById('viewPaciente').classList.add('hidden'); document.getElementById('emptyState').classList.remove('hidden');}}
+function exportarBackup() { const a=document.createElement('a'); a.href="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(ESTADO)); a.download="Backup_Psi_V6.json"; a.click(); }
+function modalLaudo() { document.getElementById('laudoTexto').value=""; document.getElementById('modalLaudo').style.display='flex'; }
+function imprimirDocumento() {
+    document.getElementById('printNome').innerText=ESTADO.pacienteAtual; document.getElementById('printData').innerText=new Date().toLocaleDateString('pt-BR');
+    document.getElementById('printTitulo').innerText=document.getElementById('laudoTipo').value;
+    document.getElementById('printTexto').innerHTML=document.getElementById('laudoTexto').value.replace(/\n/g,'<br>');
+    window.print();
+}
+function abrirConfig(){document.getElementById('configCampos').value=ESTADO.config.campos.join(","); document.getElementById('modalConfig').style.display='flex';}
+function salvarConfig(){ESTADO.config.campos=document.getElementById('configCampos').value.split(',').filter(c=>c.trim()); salvarNoDisco(); location.reload();}
 document.getElementById('dataSessao').valueAsDate = new Date();
 </script>
 </body>
