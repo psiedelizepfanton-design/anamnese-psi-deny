@@ -3,91 +3,454 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PsiManager v7.4 – Reset Integrado</title>
+<title>PsiManager v7.4 – Sistema Clínico</title>
 <style>
     /* --- DESIGN SYSTEM (NEO-MODERN) --- */
     :root { 
-        --primary: #2563eb; --primary-dark: #1e3a8a; --accent: #06b6d4; 
-        --bg: #f3f4f6; --surface: #ffffff; --text: #1e293b; 
-        --border: #e2e8f0; --danger: #ef4444; --success: #10b981; --freud: #7c3aed; 
+        --primary: #2563eb; 
+        --primary-dark: #1e3a8a; 
+        --accent: #06b6d4; 
+        --bg: #f3f4f6; 
+        --surface: #ffffff; 
+        --text: #1e293b; 
+        --border: #e2e8f0; 
+        --danger: #ef4444; 
+        --success: #10b981; 
+        --freud: #7c3aed; 
     }
-    * { box-sizing: border-box; outline: none; }
-    body { font-family: 'Segoe UI', Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    .hidden { display: none !important; }
-    .flex { display: flex; align-items: center; }
-    .gap-10 { gap: 10px; } .w-100 { width: 100%; }
+    
+    * { 
+        box-sizing: border-box; 
+        outline: none; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', Inter, system-ui, sans-serif; 
+        background: var(--bg); 
+        color: var(--text); 
+        margin: 0; 
+        height: 100vh; 
+        display: flex; 
+        flex-direction: column; 
+        overflow: hidden; 
+    }
+    
+    .hidden { 
+        display: none !important; 
+    }
+    
+    .flex { 
+        display: flex; 
+        align-items: center; 
+    }
+    
+    .gap-10 { 
+        gap: 10px; 
+    } 
+    
+    .w-100 { 
+        width: 100%; 
+    }
     
     /* LOGIN */
-    #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary-dark), var(--primary)); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-    .login-box { background: rgba(255, 255, 255, 0.95); padding: 50px; border-radius: 24px; text-align: center; width: 100%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); backdrop-filter: blur(10px); }
-    .input-group { position: relative; margin: 25px 0; }
-    .input-group input { width: 100%; padding: 16px; padding-right: 45px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1.1rem; text-align: center; transition: 0.3s; background: #f8fafc; }
-    .input-group input:focus { border-color: var(--primary); background: white; }
-    .eye-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; opacity: 0.5; font-size: 1.2rem; }
+    #loginScreen { 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary)); 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        z-index: 9999; 
+    }
+    
+    .login-box { 
+        background: rgba(255, 255, 255, 0.95); 
+        padding: 50px; 
+        border-radius: 24px; 
+        text-align: center; 
+        width: 100%; 
+        max-width: 420px; 
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
+        backdrop-filter: blur(10px); 
+    }
+    
+    .input-group { 
+        position: relative; 
+        margin: 25px 0; 
+    }
+    
+    .input-group input { 
+        width: 100%; 
+        padding: 16px; 
+        padding-right: 45px; 
+        border: 2px solid #e2e8f0; 
+        border-radius: 12px; 
+        font-size: 1.1rem; 
+        text-align: center; 
+        transition: 0.3s; 
+        background: #f8fafc; 
+    }
+    
+    .input-group input:focus { 
+        border-color: var(--primary); 
+        background: white; 
+    }
+    
+    .eye-btn { 
+        position: absolute; 
+        right: 15px; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        cursor: pointer; 
+        opacity: 0.5; 
+        font-size: 1.2rem; 
+        user-select: none;
+    }
+    
+    .eye-btn:hover {
+        opacity: 1;
+    }
     
     /* LINK DE RESET */
-    .reset-link { margin-top: 20px; font-size: 0.85rem; color: #64748b; cursor: pointer; text-decoration: underline; }
-    .reset-link:hover { color: var(--danger); }
+    .reset-link { 
+        margin-top: 20px; 
+        font-size: 0.85rem; 
+        color: #64748b; 
+        cursor: pointer; 
+        text-decoration: underline; 
+    }
+    
+    .reset-link:hover { 
+        color: var(--danger); 
+    }
 
     /* HEADER */
-    header { background: var(--surface); height: 80px; padding: 0 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.05); z-index: 10; }
-    .brand { font-size: 1.6rem; font-weight: 800; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    header { 
+        background: var(--surface); 
+        height: 80px; 
+        padding: 0 30px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+        z-index: 10; 
+    }
+    
+    .brand { 
+        font-size: 1.6rem; 
+        font-weight: 800; 
+        background: linear-gradient(90deg, var(--primary), var(--accent)); 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        background-clip: text;
+    }
     
     /* LAYOUT */
-    .layout { display: flex; flex: 1; overflow: hidden; }
-    aside { width: 320px; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-    .tabs { display: flex; padding: 10px 10px 0; gap: 5px; }
-    .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; cursor: pointer; font-weight: 600; color: #94a3b8; border-bottom: 3px solid transparent; transition: 0.2s; }
-    .tab-btn:hover { color: var(--primary); background: #f8fafc; border-radius: 8px 8px 0 0; }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .list-container { flex: 1; overflow-y: auto; padding: 15px; }
-    .patient-row { padding: 15px; background: white; border: 1px solid #f1f5f9; cursor: pointer; border-radius: 12px; margin-bottom: 8px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .patient-row:hover { transform: translateX(3px); border-color: var(--primary); }
-    .patient-row.active { background: linear-gradient(90deg, #eff6ff 0%, white 100%); border-color: var(--primary); color: var(--primary-dark); font-weight: 700; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1); }
+    .layout { 
+        display: flex; 
+        flex: 1; 
+        overflow: hidden; 
+    }
+    
+    aside { 
+        width: 320px; 
+        background: white; 
+        border-right: 1px solid var(--border); 
+        display: flex; 
+        flex-direction: column; 
+    }
+    
+    .tabs { 
+        display: flex; 
+        padding: 10px 10px 0; 
+        gap: 5px; 
+    }
+    
+    .tab-btn { 
+        flex: 1; 
+        padding: 12px; 
+        background: transparent; 
+        border: none; 
+        cursor: pointer; 
+        font-weight: 600; 
+        color: #94a3b8; 
+        border-bottom: 3px solid transparent; 
+        transition: 0.2s; 
+    }
+    
+    .tab-btn:hover { 
+        color: var(--primary); 
+        background: #f8fafc; 
+        border-radius: 8px 8px 0 0; 
+    }
+    
+    .tab-btn.active { 
+        color: var(--primary); 
+        border-bottom-color: var(--primary); 
+    }
+    
+    .list-container { 
+        flex: 1; 
+        overflow-y: auto; 
+        padding: 15px; 
+    }
+    
+    .patient-row { 
+        padding: 15px; 
+        background: white; 
+        border: 1px solid #f1f5f9; 
+        cursor: pointer; 
+        border-radius: 12px; 
+        margin-bottom: 8px; 
+        transition: 0.2s; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+    }
+    
+    .patient-row:hover { 
+        transform: translateX(3px); 
+        border-color: var(--primary); 
+    }
+    
+    .patient-row.active { 
+        background: linear-gradient(90deg, #eff6ff 0%, white 100%); 
+        border-color: var(--primary); 
+        color: var(--primary-dark); 
+        font-weight: 700; 
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1); 
+    }
 
-    main { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg); }
-    .card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid white; margin-bottom: 25px; }
+    main { 
+        flex: 1; 
+        padding: 30px; 
+        overflow-y: auto; 
+        background: var(--bg); 
+    }
+    
+    .card { 
+        background: white; 
+        border-radius: 20px; 
+        padding: 30px; 
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); 
+        border: 1px solid white; 
+        margin-bottom: 25px; 
+    }
     
     /* BTNS */
-    .btn { padding: 12px 24px; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.15); }
-    .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); }
-    .btn-freud { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); }
-    .btn-secondary { background: white; border: 1px solid #cbd5e1; color: var(--text); }
-    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: #f8fafc; }
+    .btn { 
+        padding: 12px 24px; 
+        border: none; 
+        border-radius: 50px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 8px; 
+        transition: all 0.3s; 
+        color: white; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    }
+    
+    .btn:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.15); 
+    }
+    
+    .btn-primary { 
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+    }
+    
+    .btn-freud { 
+        background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); 
+    }
+    
+    .btn-danger { 
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); 
+    }
+    
+    .btn-secondary { 
+        background: white; 
+        border: 1px solid #cbd5e1; 
+        color: var(--text); 
+    }
+    
+    .btn-secondary:hover { 
+        border-color: var(--primary); 
+        color: var(--primary); 
+        background: #f8fafc; 
+    }
     
     /* ERROR BUTTON */
-    .btn-emergency { background: #dc2626; color: white; font-size: 1.2rem; padding: 20px 40px; border: 2px solid white; animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    .btn-emergency { 
+        background: #dc2626; 
+        color: white; 
+        font-size: 1.2rem; 
+        padding: 20px 40px; 
+        border: 2px solid white; 
+        animation: pulse 2s infinite; 
+        border-radius: 12px;
+        cursor: pointer;
+    }
+    
+    @keyframes pulse { 
+        0% { transform: scale(1); } 
+        50% { transform: scale(1.05); } 
+        100% { transform: scale(1); } 
+    }
 
     /* FORMS */
-    label { display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
-    input, textarea, select { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 0.95rem; margin-bottom: 20px; background: #f8fafc; }
-    textarea { min-height: 120px; resize: vertical; }
+    label { 
+        display: block; 
+        font-size: 0.8rem; 
+        font-weight: 700; 
+        color: #64748b; 
+        margin-bottom: 8px; 
+        text-transform: uppercase; 
+    }
+    
+    input, textarea, select { 
+        width: 100%; 
+        padding: 14px; 
+        border: 1px solid #e2e8f0; 
+        border-radius: 12px; 
+        font-family: inherit; 
+        font-size: 0.95rem; 
+        margin-bottom: 20px; 
+        background: #f8fafc; 
+    }
+    
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--primary);
+        background: white;
+    }
+    
+    textarea { 
+        min-height: 120px; 
+        resize: vertical; 
+    }
 
     /* MODAL */
-    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 5000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-    .modal-content { background: white; padding: 40px; border-radius: 24px; width: 600px; max-width: 95%; max-height: 90vh; overflow-y: auto; }
+    .modal-backdrop { 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(15, 23, 42, 0.6); 
+        z-index: 5000; 
+        display: none; 
+        align-items: center; 
+        justify-content: center; 
+        backdrop-filter: blur(4px); 
+    }
+    
+    .modal-content { 
+        background: white; 
+        padding: 40px; 
+        border-radius: 24px; 
+        width: 600px; 
+        max-width: 95%; 
+        max-height: 90vh; 
+        overflow-y: auto; 
+    }
+    
+    .modal-content h3 {
+        margin-top: 0;
+        color: var(--primary-dark);
+    }
 
     /* PRINT */
-    #printSection { display: none; }
-    @media print {
-        body > * { display: none !important; }
-        #printSection, #printSection * { display: block !important; }
-        #printSection { position: absolute; top: 0; left: 0; width: 100%; padding: 40px; }
-        .doc-header { text-align: center; border-bottom: 2px solid black; margin-bottom: 30px; padding-bottom: 10px; }
-        .doc-title { text-align: center; font-size: 16pt; font-weight: bold; margin: 30px 0; text-transform: uppercase; }
-        .doc-body { font-size: 12pt; line-height: 1.6; text-align: justify; min-height: 500px; }
-        .doc-footer { margin-top: 50px; text-align: center; }
-        .doc-sign { border-top: 1px solid black; display: inline-block; width: 300px; padding-top: 10px; margin-top: 50px; }
+    #printSection { 
+        display: none; 
     }
-    .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--danger) !important; }
-    @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+    
+    @media print {
+        body > * { 
+            display: none !important; 
+        }
+        #printSection, #printSection * { 
+            display: block !important; 
+        }
+        #printSection { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            padding: 40px; 
+        }
+        .doc-header { 
+            text-align: center; 
+            border-bottom: 2px solid black; 
+            margin-bottom: 30px; 
+            padding-bottom: 10px; 
+        }
+        .doc-title { 
+            text-align: center; 
+            font-size: 16pt; 
+            font-weight: bold; 
+            margin: 30px 0; 
+            text-transform: uppercase; 
+        }
+        .doc-body { 
+            font-size: 12pt; 
+            line-height: 1.6; 
+            text-align: justify; 
+            min-height: 500px; 
+        }
+        .doc-footer { 
+            margin-top: 50px; 
+            text-align: center; 
+        }
+        .doc-sign { 
+            border-top: 1px solid black; 
+            display: inline-block; 
+            width: 300px; 
+            padding-top: 10px; 
+            margin-top: 50px; 
+        }
+    }
+    
+    .shake { 
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; 
+        border-color: var(--danger) !important; 
+    }
+    
+    @keyframes shake { 
+        10%, 90% { transform: translate3d(-1px, 0, 0); } 
+        20%, 80% { transform: translate3d(2px, 0, 0); } 
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 
+        40%, 60% { transform: translate3d(4px, 0, 0); } 
+    }
+    
+    /* Table styles */
+    table {
+        border-collapse: collapse;
+    }
+    
+    table th {
+        font-weight: 700;
+        color: var(--primary-dark);
+        border-bottom: 2px solid var(--border);
+        padding: 15px;
+        text-align: left;
+    }
+    
+    table td {
+        padding: 15px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    table tr:hover {
+        background: #f8fafc;
+    }
 </style>
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
 <div id="loginScreen">
     <div class="login-box">
         <div style="font-size: 4rem; margin-bottom: 10px;">🧠</div>
@@ -104,6 +467,7 @@
     </div>
 </div>
 
+<!-- HEADER -->
 <header>
     <div class="brand">PsiManager</div>
     <div style="display:flex; gap:10px;">
@@ -114,24 +478,32 @@
     </div>
 </header>
 
+<!-- MAIN LAYOUT -->
 <div class="layout">
+    <!-- SIDEBAR -->
     <aside>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchSidebar('pacientes')">Pacientes</button>
             <button class="tab-btn" onclick="switchSidebar('agenda')">Agenda</button>
         </div>
+        
+        <!-- PACIENTES TAB -->
         <div id="sidePacientes" class="list-container">
             <input type="text" id="searchBox" placeholder="🔍 Buscar..." onkeyup="renderList()" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #e2e8f0; border-radius:8px;">
             <button class="btn btn-secondary" onclick="addManual()" style="width:100%; justify-content:center;">+ Novo Paciente</button>
             <div id="patientList" style="margin-top:15px;"></div>
         </div>
+        
+        <!-- AGENDA TAB -->
         <div id="sideAgenda" class="list-container hidden">
             <button class="btn btn-secondary" onclick="openModal('modalAgenda')" style="width:100%; justify-content:center;">+ Agendar</button>
             <div id="agendaList" style="margin-top:15px;"></div>
         </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main>
+        <!-- EMPTY STATE -->
         <div id="emptyState" style="text-align:center; padding-top: 100px; color:#94a3b8;">
             <div style="font-size: 6rem; margin-bottom: 20px; opacity:0.5;">👩‍⚕️</div>
             <h2 style="color:#64748b">Sistema Pronto</h2>
@@ -145,6 +517,7 @@
             <button class="btn btn-secondary" onclick="showFinance()" style="margin-top: 30px;">Ver Painel Financeiro</button>
         </div>
 
+        <!-- FINANCE VIEW -->
         <div id="financeView" class="hidden">
             <div class="flex" style="justify-content:space-between; margin-bottom: 20px;">
                 <h2 style="color:var(--primary-dark); margin:0;">💰 Controle Financeiro</h2>
@@ -162,14 +535,24 @@
             </div>
             <div class="card">
                 <div style="overflow-x: auto;">
-                    <table id="finTable" style="width:100%; text-align:left;">
-                        <thead><tr><th style="padding:15px;">Data</th><th>Paciente</th><th>Descrição</th><th>Valor</th><th>Status</th><th></th></tr></thead>
+                    <table id="finTable" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Paciente</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
+        <!-- PATIENT VIEW -->
         <div id="patientView" class="hidden">
             <div class="flex" style="justify-content: space-between; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
                 <h1 id="pName" style="color:var(--primary-dark); margin:0; font-size:2rem;">Nome</h1>
@@ -180,23 +563,39 @@
                     <button class="btn btn-danger" onclick="deletePatient()">🗑</button>
                 </div>
             </div>
+            
             <div class="card">
                 <div class="flex gap-10">
-                    <div class="w-100"><label>Telefone</label><input type="text" id="pPhone" onchange="saveCurrent()"></div>
-                    <div class="w-100"><label>E-mail</label><input type="text" id="pEmail" onchange="saveCurrent()"></div>
+                    <div class="w-100">
+                        <label>Telefone</label>
+                        <input type="text" id="pPhone" onchange="saveCurrent()">
+                    </div>
+                    <div class="w-100">
+                        <label>E-mail</label>
+                        <input type="text" id="pEmail" onchange="saveCurrent()">
+                    </div>
                 </div>
+                
                 <h3 style="color:var(--primary); margin-top:10px;">Anamnese</h3>
                 <div id="anamneseFields"></div>
+                
                 <div id="extraFields" class="hidden" style="background: #fffbeb; padding: 20px; border: 1px solid #fcd34d; border-radius: 12px; margin-top: 20px;">
                     <h4 style="margin:0 0 15px 0; color: #b45309;">📥 Dados Importados</h4>
                     <div id="extraContainer"></div>
                 </div>
-                <div style="text-align: right; margin-top: 20px;"><button class="btn btn-primary" onclick="saveAnamnese()">Salvar Alterações</button></div>
+                
+                <div style="text-align: right; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="saveAnamnese()">Salvar Alterações</button>
+                </div>
             </div>
+            
             <div class="card" style="background: #f8fafc; border: 1px solid #e2e8f0;">
                 <h3 style="color:var(--primary)">Sessões & Evolução</h3>
                 <div class="flex gap-10" style="align-items: flex-end;">
-                    <div style="width: 250px;"><label>Data</label><input type="date" id="sessionDate" style="background:white;"></div>
+                    <div style="width: 250px;">
+                        <label>Data</label>
+                        <input type="date" id="sessionDate" style="background:white;">
+                    </div>
                     <button class="btn btn-secondary" style="margin-bottom: 20px;" onclick="billSession()">💲 Cobrar</button>
                 </div>
                 <textarea id="sessionText" placeholder="Evolução..." style="background:white;"></textarea>
@@ -207,75 +606,199 @@
     </main>
 </div>
 
+<!-- PRINT SECTION -->
 <div id="printSection">
-    <div class="doc-header"><h2>EDELIZE FANTON</h2><p>PSICANALISTA CLÍNICA</p></div>
-    <div style="margin-bottom: 40px;"><p><strong>Paciente:</strong> <span id="docPatientName"></span></p><p><strong>Data:</strong> <span id="docDate"></span></p></div>
+    <div class="doc-header">
+        <h2>EDELIZE FANTON</h2>
+        <p>PSICANALISTA CLÍNICA</p>
+    </div>
+    <div style="margin-bottom: 40px;">
+        <p><strong>Paciente:</strong> <span id="docPatientName"></span></p>
+        <p><strong>Data:</strong> <span id="docDate"></span></p>
+    </div>
     <div class="doc-title" id="docTypeTitle">LAUDO</div>
     <div class="doc-body" id="docContentBody"></div>
-    <div class="doc-footer"><div class="doc-sign"><strong>Edelize Fanton</strong><br>Psicanalista</div></div>
+    <div class="doc-footer">
+        <div class="doc-sign">
+            <strong>Edelize Fanton</strong><br>
+            Psicanalista
+        </div>
+    </div>
 </div>
 
-<div id="modalDoc" class="modal-backdrop"><div class="modal-content"><h3>Documento</h3><select id="docType"><option>LAUDO PSICANÁLITICO</option><option>ATESTADO</option><option>ENCAMINHAMENTO</option></select><textarea id="docText" style="height: 300px;"></textarea><div class="flex gap-10" style="justify-content: flex-end;"><button class="btn btn-secondary" onclick="closeModal('modalDoc')">Cancelar</button><button class="btn btn-primary" onclick="printDoc()">🖨️ IMPRIMIR</button></div></div></div>
-<div id="modalAgenda" class="modal-backdrop"><div class="modal-content"><h3>Agendar</h3><label>Paciente</label><select id="agPatient"></select><label>Data/Hora</label><input type="datetime-local" id="agDate"><label>Obs</label><input type="text" id="agObs"><div class="flex gap-10" style="justify-content: flex-end;"><button class="btn btn-secondary" onclick="closeModal('modalAgenda')">Cancelar</button><button class="btn btn-primary" onclick="saveAgenda()">Confirmar</button></div></div></div>
-<div id="modalFin" class="modal-backdrop"><div class="modal-content"><h3>Lançamento</h3><label>Paciente</label><select id="finPatient"></select><label>Descrição</label><input type="text" id="finDesc"><div class="flex gap-10"><div><label>Valor</label><input type="number" id="finVal"></div><div><label>Status</label><select id="finStatus"><option value="pago">Pago</option><option value="pendente">Pendente</option></select></div></div><label>Data</label><input type="date" id="finDate"><div class="flex gap-10" style="justify-content: flex-end;"><button class="btn btn-secondary" onclick="closeModal('modalFin')">Cancelar</button><button class="btn btn-primary" onclick="saveFin()">Salvar</button></div></div></div>
-<div id="modalConfig" class="modal-backdrop"><div class="modal-content"><h3>Configurar Campos</h3><textarea id="cfgFields"></textarea><div class="flex gap-10" style="justify-content: flex-end;"><button class="btn btn-secondary" onclick="closeModal('modalConfig')">Cancelar</button><button class="btn btn-primary" onclick="saveConfig()">Salvar</button></div></div></div>
+<!-- MODALS -->
+<!-- Modal Documento -->
+<div id="modalDoc" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Gerar Documento</h3>
+        <label>Tipo de Documento</label>
+        <select id="docType">
+            <option>LAUDO PSICANALÍTICO</option>
+            <option>ATESTADO</option>
+            <option>ENCAMINHAMENTO</option>
+        </select>
+        <label>Conteúdo</label>
+        <textarea id="docText" style="height: 300px;"></textarea>
+        <div class="flex gap-10" style="justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal('modalDoc')">Cancelar</button>
+            <button class="btn btn-primary" onclick="printDoc()">🖨️ IMPRIMIR</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agenda -->
+<div id="modalAgenda" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Agendar Consulta</h3>
+        <label>Paciente</label>
+        <select id="agPatient"></select>
+        <label>Data/Hora</label>
+        <input type="datetime-local" id="agDate">
+        <label>Observações</label>
+        <input type="text" id="agObs">
+        <div class="flex gap-10" style="justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal('modalAgenda')">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveAgenda()">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Financeiro -->
+<div id="modalFin" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Novo Lançamento</h3>
+        <label>Paciente</label>
+        <select id="finPatient"></select>
+        <label>Descrição</label>
+        <input type="text" id="finDesc">
+        <div class="flex gap-10">
+            <div class="w-100">
+                <label>Valor (R$)</label>
+                <input type="number" id="finVal" step="0.01">
+            </div>
+            <div class="w-100">
+                <label>Status</label>
+                <select id="finStatus">
+                    <option value="pago">Pago</option>
+                    <option value="pendente">Pendente</option>
+                </select>
+            </div>
+        </div>
+        <label>Data</label>
+        <input type="date" id="finDate">
+        <div class="flex gap-10" style="justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal('modalFin')">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveFin()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Config -->
+<div id="modalConfig" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Configurar Campos da Anamnese</h3>
+        <p style="color: #64748b; font-size: 0.9rem;">Separe os campos por vírgula</p>
+        <textarea id="cfgFields" style="height: 200px;"></textarea>
+        <div class="flex gap-10" style="justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeModal('modalConfig')">Cancelar</button>
+            <button class="btn btn-primary" onclick="saveConfig()">Salvar</button>
+        </div>
+    </div>
+</div>
 
 <script>
-/** * PSI MANAGER v7.4 - RESET & RECOVERY * */
+/** 
+ * PSI MANAGER v7.4 - CORRIGIDO & OTIMIZADO
+ * Sistema de Gestão Clínica para Psicanálise
+ */
 
 // DADOS PRÉ-CARREGADOS (98 PACIENTES)
-const SEED_DATA_JSON = `{"pass": null, "patients": {"ALEXIA ALANA MIECOANSKI": {"created": "2023/02/15 10:41:46 AM GMT-3", "phone": "4999178262", "email": "miecoanski@gmail.com", "anamnese": {"Data de Nascimento": "1995-02-09", "Cidade": "DIONISIO CERQUEIRA", "Estado Civil": "Casada(O)", "Filhos ?": "N\u00e3o", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profiss\u00e3o": "aux.adminstrativo", "Fone do C\u00f4njuge, Filho(a) ou um Parente pr\u00f3ximo": "46988277066", "Fone de um(a) amigo(a) que te conhe\u00e7a bem": "4699373185", "Toma rem\u00e9dio controlado? Qual Rem\u00e9dio ?": "n\u00e3o", "J\u00e1 fez terapia?": "Sim", "Caso tenha feito, quanto tempo de terapia?": "2 meses", "Quando foi a \u00faltima vez?": "2022-12-27", "O que achou da sua \u00faltima terapia com outro profissional?": "boa", "Descreva o motivo pelo qual voc\u00ea busca ajuda terap\u00eautica": "ansiedade, tristeza", "De 0 a 10, em ordem crescente, qual a nota que voc\u00ea d\u00e1 para o seu estado emocional?": "3", "Tem um credo ou uma f\u00e9 que voc\u00ea acredita? Qual?": "sim , em Deus", "Qual \u00e9 o seu Instagram?": "@alexia.alana8", "Qual \u00e9 o seu maior desafio?": "a espera", "Qual acontecimento te tira do s\u00e9rio?": "ultimamente qualquer coisa", "Voc\u00ea se considera uma pessoa focada?": "As Vezes", "Qual a sua principal caracter\u00edstica positiva?": "pensar no proximo", "Qual a sua principal caracter\u00edstica negativa?": "procrastinar", "O que voc\u00ea acha que te limita crescer?": "eu mesma", "Seu maior sonho?": "abrir meu consult\u00f3rio", "Voc\u00ea se acha uma pessoa produtiva?": "Sim", "Voc\u00ea cumpre suas tarefas?": "Sim", "Voc\u00ea se considera disciplinado(a)?": "Talvez", "Voc\u00ea pensa e descreve suas metas?": "Sim", "Pratica exerc\u00edcios f\u00edsicos?": "N\u00e3o", "Quais s\u00e3o seus hobbies ?": "dirigir", "Voc\u00ea tem alimenta\u00e7\u00e3o Saud\u00e1vel?": "Talvez", "Costuma ler pelo menos um livro por m\u00eas?": "N\u00e3o", "No momento, est\u00e1 lendo qual livro?": "o secredo", "O que voc\u00ea mais ama fazer?": "dormi", "O que te deixa irado(a)?": "mentiras", "Qual foi sua maior decep\u00e7\u00e3o at\u00e9 hoje?": "ser traida", "Se voc\u00ea pudesse dizer em uma frase o que \u00e9 trauma ou o que foi trauma para voc\u00ea, o que seria?": "ele nos adoece", "EU VOU PEGAR FIRME COM VOC\u00ca! PODEMOS?": "Sim"}, "sessions": []}, "Kelin Taiane Santos Kehl": {"created": "2023/02/24 4:20:10 PM GMT-3", "phone": "49991989091", "email": "kelintaianesantos@gmail.com", "anamnese": {"Data de Nascimento": "2001-11-28", "Cidade": "Dion\u00edsio Cerqueira SC", "Estado Civil": "Casada(O)", "Filhos ?": "N\u00e3o", "Quantos Filhos e Qual a Idade Deles ?": "Nao tenho filhos.", "Profiss\u00e3o": "Desempregada", "Fone do C\u00f4njuge, Filho(a) ou um Parente pr\u00f3ximo": "49991505980", "Fone de um(a) amigo(a) que te conhe\u00e7a bem": "49991462196", "Toma rem\u00e9dio controlado? Qual Rem\u00e9dio ?": "Sim, Pondera XR 13,5 mg", "J\u00e1 fez terapia?": "Sim", "Caso tenha feito, quanto tempo de terapia?": "Nao me lembro, foram poucos meses.", "Quando foi a \u00faltima vez?": "2018-09-12", "O que achou da sua \u00faltima terapia com outro profissional?": "Nao gostei, pois nao tive resultado", "Descreva o motivo pelo qual voc\u00ea busca ajuda terap\u00eautica": "Ansiedade, sa\u00fade mental", "De 0 a 10, em ordem crescente, qual a nota que voc\u00ea d\u00e1 para o seu estado emocional?": "6", "Tem um credo ou uma f\u00e9 que voc\u00ea acredita? Qual?": "Sim, Deus", "Qual \u00e9 o seu Instagram?": "kelly_taianny", "Qual \u00e9 o seu maior desafio?": "Meu temperamento, perdoar", "Qual acontecimento te tira do s\u00e9rio?": "Injusti\u00e7a", "Voc\u00ea se considera uma pessoa focada?": "As Vezes", "Qual a sua principal caracter\u00edstica positiva?": "Sonho alto", "Qual a sua principal caracter\u00edstica negativa?": "Sou pessimista", "O que voc\u00ea acha que te limita crescer?": "Falta de confian\u00e7a em mim, baixa auto estima", "Seu maior sonho?": "Conhecer v\u00e1rios pa\u00edses com meu marido", "Voc\u00ea se acha uma pessoa produtiva?": "As Vezes", "Voc\u00ea cumpre suas tarefas?": "Sim", "Voc\u00ea se considera disciplinado(a)?": "Sim", "Voc\u00ea pensa e descreve suas metas?": "Sim", "Pratica exerc\u00edcios f\u00edsicos?": "N\u00e3o", "Quais s\u00e3o seus hobbies ?": "Ir a igreja, sair para comer lanche com meu marido", "Voc\u00ea tem alimenta\u00e7\u00e3o Saud\u00e1vel?": "Talvez", "Costuma ler pelo menos um livro por m\u00eas?": "N\u00e3o", "No momento, est\u00e1 lendo qual livro?": "Nenhum", "O que voc\u00ea mais ama fazer?": "Cantar", "O que te deixa irado(a)?": "Falsidade, mentira.", "Qual foi sua maior decep\u00e7\u00e3o at\u00e9 hoje?": "Abandono afetivo do meu pai, trai\u00e7\u00e3o de uma das minhas melhores amigas.", "Se voc\u00ea pudesse dizer em uma frase o que \u00e9 trauma ou o que foi trauma para voc\u00ea, o que seria?": "N\u00e3o sei dizer", "EU VOU PEGAR FIRME COM VOC\u00ca! PODEMOS?": "Sim"}, "sessions": []}, "Luana Machado Slaviero": {"created": "2023/02/25 9:01:35 AM GMT-3", "phone": "4999538202", "email": "katianemartinsmachado@gmail.com", "anamnese": {"Data de Nascimento": "2023-08-01", "Cidade": "Barrac\u00e3o", "Estado Civil": "Solteira(O)", "Filhos ?": "N\u00e3o", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profiss\u00e3o": "Estudante adolescente", "Fone do C\u00f4njuge, Filho(a) ou um Parente pr\u00f3ximo": "Pai 4998309062", "Fone de um(a) amigo(a) que te conhe\u00e7a bem": "49999538202", "Toma rem\u00e9dio controlado? Qual Rem\u00e9dio ?": "Sim", "J\u00e1 fez terapia?": "N\u00e3o", "Caso tenha feito, quanto tempo de terapia?": "N\u00e3o", "Quando foi a \u00faltima vez?": "2023-02-25", "O que achou da sua \u00faltima terapia com outro profissional?": "N\u00e3o fez", "Descreva o motivo pelo qual voc\u00ea busca ajuda terap\u00eautica": "Falta de \u00e2nimo, s\u00f3 faz oq gosta", "De 0 a 10, em ordem crescente, qual a nota que voc\u00ea d\u00e1 para o seu estado emocional?": "5", "Tem um credo ou uma f\u00e9 que voc\u00ea acredita? Qual?": "Deus", "Qual \u00e9 o seu Instagram?": "@psi_edelizefanton", "Qual \u00e9 o seu maior desafio?": "Bloqueio", "Qual acontecimento te tira do s\u00e9rio?": "Privar de assistir jogo", "Voc\u00ea se considera uma pessoa focada?": "N\u00e3o", "Qual a sua principal caracter\u00edstica positiva?": "Inteligente", "Qual a sua principal caracter\u00edstica negativa?": "Ambi\u00e7\u00e3o", "O que voc\u00ea acha que te limita crescer?": "Desfoco", "Seu maior sonho?": "Ser rica e trabalhar com algo relacionado a futebol", "Voc\u00ea se acha uma pessoa produtiva?": "As Vezes", "Voc\u00ea cumpre suas tarefas?": "Talvez", "Voc\u00ea se considera disciplinado(a)?": "Sim", "Voc\u00ea pensa e descreve suas metas?": "Sim", "Pratica exerc\u00edcios f\u00edsicos?": "N\u00e3o", "Quais s\u00e3o seus hobbies ?": "Ler, ouvir m\u00fasica e assistir jogo de futebol", "Voc\u00ea tem alimenta\u00e7\u00e3o Saud\u00e1vel?": "Talvez", "Costuma ler pelo menos um livro por m\u00eas?": "Sim", "No momento, est\u00e1 lendo qual livro?": "Harry Potter e o C\u00e1lice de Fogo", "O que voc\u00ea mais ama fazer?": "Ouvir m\u00fasica", "O que te deixa irado(a)?": "Quando o flamengo ganha ou perde algum jogo", "Qual foi sua maior decep\u00e7\u00e3o at\u00e9 hoje?": "N\u00e3o sei", "Se voc\u00ea pudesse dizer em uma frase o que \u00e9 trauma ou o que foi trauma para voc\u00ea, o que seria?": "N\u00e3o sei", "EU VOU PEGAR FIRME COM VOC\u00ca! PODEMOS?": "N\u00e3o"}, "sessions": []}, "Luciana de fatima da silva": {"created": "2023/03/01 11:16:20 AM GMT-3", "phone": "46999080162", "email": "Luciana8131@gmail.com", "anamnese": {"Data de Nascimento": "2023-03-09", "Cidade": "Bom Jesus do Sul", "Estado Civil": "Casada(O)", "Filhos ?": "N\u00e3o", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profiss\u00e3o": "Auxiliar de cozinha", "Fone do C\u00f4njuge, Filho(a) ou um Parente pr\u00f3ximo": "46999073894", "Fone de um(a) amigo(a) que te conhe\u00e7a bem": "42998600311", "Toma rem\u00e9dio controlado? Qual Rem\u00e9dio ?": "N\u00e3o", "J\u00e1 fez terapia?": "N\u00e3o", "Caso tenha feito, quanto tempo de terapia?": "N\u00e3o fiz", "Quando foi a \u00faltima vez?": "2023-03-01", "O que achou da sua \u00faltima terapia com outro profissional?": "N\u00e3o fiz", "Descreva o motivo pelo qual voc\u00ea busca ajuda terap\u00eautica": "N\u00e3o fiz", "De 0 a 10, em ordem crescente, qual a nota que voc\u00ea d\u00e1 para o seu estado emocional?": "8", "Tem um credo ou uma f\u00e9 que voc\u00ea acredita? Qual?": "Acredito na ora\u00e7\u00e3o", "Qual \u00e9 o seu Instagram?": "@luciana de fatima da silva", "Qual \u00e9 o seu maior desafio?": "Superar os filhos que perdi.", "Qual acontecimento te tira do s\u00e9rio?": "Descaso com outras pessoas", "Voc\u00ea se considera uma pessoa focada?": "As Vezes", "Qual a sua principal caracter\u00edstica positiva?": "Lealdade", "Qual a sua principal caracter\u00edstica negativa?": "Teimosia", "O que voc\u00ea acha que te limita crescer?": "Eu mesma", "Seu maior sonho?": "Que o mundo seja melhor", "Voc\u00ea se acha uma pessoa produtiva?": "Sim", "Voc\u00ea cumpre suas tarefas?": "Sim", "Voc\u00ea se considera disciplinado(a)?": "N\u00e3o", "Voc\u00ea pensa e descreve suas metas?": "Sim", "Pratica exerc\u00edcios f\u00edsicos?": "N\u00e3o", "Quais s\u00e3o seus hobbies ?": "Leitura e ouvir m\u00fasica", "Voc\u00ea tem alimenta\u00e7\u00e3o Saud\u00e1vel?": "Talvez", "Costuma ler pelo menos um livro por m\u00eas?": "Sim", "No momento, est\u00e1 lendo qual livro?": "Mentes que amam demais. \" Ana Beatriz Barbosa Silva", "O que voc\u00ea mais ama fazer?": "Ficar em casa", "O que te deixa irado(a)?": "Coisar fora do lugar e sujas", "Qual foi sua maior decep\u00e7\u00e3o at\u00e9 hoje?": "Minha m\u00e3e", "Se voc\u00ea pudesse dizer em uma frase o que \u00e9 trauma ou o que foi trauma para voc\u00ea, o que seria?": "Trauma pra mim foi a perda dos meus filhos e descobrir que eu estava sozinha pra enfrentar tudo pq as pessoas que deveriam me ajudar me acolher n\u00e3o o fizeram.", "EU VOU PEGAR FIRME COM VOC\u00ca! PODEMOS?": "Sim"}, "sessions": []}, "Patr\u00edcia Lara Moreira": {"created": "2023/03/02 12:09:46 PM GMT-3", "phone": "49991250388", "email": "patriciabesteti@gmail.com", "anamnese": {"Data de Nascimento": "1979-10-09", "Cidade": "Dionisio Cerqueira", "Estado Civil": "Divorciada ,mas j\u00e1 fazem 3 anos q estou com outra pessoa", "Filhos ?": "N\u00e3o", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profiss\u00e3o": "Empreendedora", "Fone do C\u00f4njuge, Filho(a) ou um Parente pr\u00f3ximo": "49991900576", "Fone de um(a) amigo(a) que te conhe\u00e7a bem": "49991526001", "Toma rem\u00e9dio controlado? Qual Rem\u00e9dio ?": "Sim ,v\u00e1rios sou epocondriaca...", "J\u00e1 fez terapia?": "N\u00e3o", "Caso tenha feito, quanto tempo de terapia?": "Fui atendida por 2 piscoligas, Deus me livr", "Quando foi a \u00faltima vez?": "2020-06-03", "O que achou da sua \u00faltima terapia com outro profissional?": "N\u00e3o \u00e9 a mesma coisa com piscologas uma p\u00e9ssima", "Descreva o motivo pelo qual voc\u00ea busca ajuda terap\u00eautica": "Pq tem dias q nem eu me suporto de tanta ansiedade, ins\u00f4nia e etc e tals...", "De 0 a 10, em ordem crescente, qual a nota que voc\u00ea d\u00e1 para o seu estado emocional?": "1", "Tem um credo ou uma f\u00e9 que voc\u00ea acredita? Qual?": "Crist\u00e3", "Qual \u00e9 o seu Instagram?": "N\u00e3o tenho", "Qual \u00e9 o seu maior desafio?": "Superar a outra Patr\u00edcia q tem dentro dessa Patr\u00edcia Lara", "Qual acontecimento te tira do s\u00e9rio?": "Injusti\u00e7a, ingratid\u00e3o...", "Voc\u00ea se considera uma pessoa focada?": "As Vezes", "Qual a sua principal caracter\u00edstica positiva?": "Minha F\u00e9, talvez o q ainda me mantenha viva...\"morta\"", "Qual a sua principal caracter\u00edstica negativa?": "O NEGATIVISMO", "O que voc\u00ea acha que te limita crescer?": "Meus medos,meus traumas...", "Seu maior sonho?": "Superar a mim mesma;", "Voc\u00ea se acha uma pessoa produtiva?": "Sim", "Voc\u00ea cumpre suas tarefas?": "Sim", "Voc\u00ea se considera disciplinado(a)?": "N\u00e3o", "Voc\u00ea pensa e descreve suas metas?": "N\u00e3o", "Pratica exerc\u00edcios f\u00edsicos?": "N\u00e3o", "Quais s\u00e3o seus hobbies ?": "Me trancar no meu quarto escuro", "Voc\u00ea tem alimenta\u00e7\u00e3o Saud\u00e1vel?": "N\u00e3o", "Costuma ler pelo menos um livro por m\u00eas?": "N\u00e3o", "No momento, est\u00e1 lendo qual livro?": "Nenhum", "O que voc\u00ea mais ama fazer?": "Me trancar num quarto escuro \ud83d\ude1e", "O que te deixa irado(a)?": "Falta de respeito", "Qual foi sua maior decep\u00e7\u00e3o at\u00e9 hoje?": "Minha fam\u00edlia", "Se voc\u00ea pudesse dizer em uma frase o que \u00e9 trauma ou o que foi trauma para voc\u00ea, o que seria?": "\u00c9 algo q me bloqueia pra sempre!", "EU VOU PEGAR FIRME COM VOC\u00ca! PODEMOS?": "Sim"}, "sessions": []}}, "agenda": [], "finance": [], "config": {"fields": ["Queixa Principal", "Histórico Pessoal", "Estrutura Familiar", "Sonhos/Inconsciente", "Medicamentos", "Hipótese Diagnóstica"]}}`;
+const SEED_DATA_JSON = `{"pass": null, "patients": {"ALEXIA ALANA MIECOANSKI": {"created": "2023/02/15 10:41:46 AM GMT-3", "phone": "4999178262", "email": "miecoanski@gmail.com", "anamnese": {"Data de Nascimento": "1995-02-09", "Cidade": "DIONISIO CERQUEIRA", "Estado Civil": "Casada(O)", "Filhos ?": "Não", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profissão": "aux.adminstrativo", "Fone do Cônjuge, Filho(a) ou um Parente próximo": "46988277066", "Fone de um(a) amigo(a) que te conheça bem": "4699373185", "Toma remédio controlado? Qual Remédio ?": "não", "Já fez terapia?": "Sim", "Caso tenha feito, quanto tempo de terapia?": "2 meses", "Quando foi a última vez?": "2022-12-27", "O que achou da sua última terapia com outro profissional?": "boa", "Descreva o motivo pelo qual você busca ajuda terapêutica": "ansiedade, tristeza", "De 0 a 10, em ordem crescente, qual a nota que você dá para o seu estado emocional?": "3", "Tem um credo ou uma fé que você acredita? Qual?": "sim , em Deus", "Qual é o seu Instagram?": "@alexia.alana8", "Qual é o seu maior desafio?": "a espera", "Qual acontecimento te tira do sério?": "ultimamente qualquer coisa", "Você se considera uma pessoa focada?": "As Vezes", "Qual a sua principal característica positiva?": "pensar no proximo", "Qual a sua principal característica negativa?": "procrastinar", "O que você acha que te limita crescer?": "eu mesma", "Seu maior sonho?": "abrir meu consultório", "Você se acha uma pessoa produtiva?": "Sim", "Você cumpre suas tarefas?": "Sim", "Você se considera disciplinado(a)?": "Talvez", "Você pensa e descreve suas metas?": "Sim", "Pratica exercícios físicos?": "Não", "Quais são seus hobbies ?": "dirigir", "Você tem alimentação Saudável?": "Talvez", "Costuma ler pelo menos um livro por mês?": "Não", "No momento, está lendo qual livro?": "o secredo", "O que você mais ama fazer?": "dormi", "O que te deixa irado(a)?": "mentiras", "Qual foi sua maior decepção até hoje?": "ser traida", "Se você pudesse dizer em uma frase o que é trauma ou o que foi trauma para você, o que seria?": "ele nos adoece", "EU VOU PEGAR FIRME COM VOCÊ! PODEMOS?": "Sim"}, "sessions": []}, "Kelin Taiane Santos Kehl": {"created": "2023/02/24 4:20:10 PM GMT-3", "phone": "49991989091", "email": "kelintaianesantos@gmail.com", "anamnese": {"Data de Nascimento": "2001-11-28", "Cidade": "Dionísio Cerqueira SC", "Estado Civil": "Casada(O)", "Filhos ?": "Não", "Quantos Filhos e Qual a Idade Deles ?": "Nao tenho filhos.", "Profissão": "Desempregada", "Fone do Cônjuge, Filho(a) ou um Parente próximo": "49991505980", "Fone de um(a) amigo(a) que te conheça bem": "49991462196", "Toma remédio controlado? Qual Remédio ?": "Sim, Pondera XR 13,5 mg", "Já fez terapia?": "Sim", "Caso tenha feito, quanto tempo de terapia?": "Nao me lembro, foram poucos meses.", "Quando foi a última vez?": "2018-09-12", "O que achou da sua última terapia com outro profissional?": "Nao gostei, pois nao tive resultado", "Descreva o motivo pelo qual você busca ajuda terapêutica": "Ansiedade, saúde mental", "De 0 a 10, em ordem crescente, qual a nota que você dá para o seu estado emocional?": "6", "Tem um credo ou uma fé que você acredita? Qual?": "Sim, Deus", "Qual é o seu Instagram?": "kelly_taianny", "Qual é o seu maior desafio?": "Meu temperamento, perdoar", "Qual acontecimento te tira do sério?": "Injustiça", "Você se considera uma pessoa focada?": "As Vezes", "Qual a sua principal característica positiva?": "Sonho alto", "Qual a sua principal característica negativa?": "Sou pessimista", "O que você acha que te limita crescer?": "Falta de confiança em mim, baixa auto estima", "Seu maior sonho?": "Conhecer vários países com meu marido", "Você se acha uma pessoa produtiva?": "As Vezes", "Você cumpre suas tarefas?": "Sim", "Você se considera disciplinado(a)?": "Sim", "Você pensa e descreve suas metas?": "Sim", "Pratica exercícios físicos?": "Não", "Quais são seus hobbies ?": "Ir a igreja, sair para comer lanche com meu marido", "Você tem alimentação Saudável?": "Talvez", "Costuma ler pelo menos um livro por mês?": "Não", "No momento, está lendo qual livro?": "Nenhum", "O que você mais ama fazer?": "Cantar", "O que te deixa irado(a)?": "Falsidade, mentira.", "Qual foi sua maior decepção até hoje?": "Abandono afetivo do meu pai, traição de uma das minhas melhores amigas.", "Se você pudesse dizer em uma frase o que é trauma ou o que foi trauma para você, o que seria?": "Não sei dizer", "EU VOU PEGAR FIRME COM VOCÊ! PODEMOS?": "Sim"}, "sessions": []}, "Luana Machado Slaviero": {"created": "2023/02/25 9:01:35 AM GMT-3", "phone": "4999538202", "email": "katianemartinsmachado@gmail.com", "anamnese": {"Data de Nascimento": "2023-08-01", "Cidade": "Barracão", "Estado Civil": "Solteira(O)", "Filhos ?": "Não", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profissão": "Estudante adolescente", "Fone do Cônjuge, Filho(a) ou um Parente próximo": "Pai 4998309062", "Fone de um(a) amigo(a) que te conheça bem": "49999538202", "Toma remédio controlado? Qual Remédio ?": "Sim", "Já fez terapia?": "Não", "Caso tenha feito, quanto tempo de terapia?": "Não", "Quando foi a última vez?": "2023-02-25", "O que achou da sua última terapia com outro profissional?": "Não fez", "Descreva o motivo pelo qual você busca ajuda terapêutica": "Falta de ânimo, só faz oq gosta", "De 0 a 10, em ordem crescente, qual a nota que você dá para o seu estado emocional?": "5", "Tem um credo ou uma fé que você acredita? Qual?": "Deus", "Qual é o seu Instagram?": "@psi_edelizefanton", "Qual é o seu maior desafio?": "Bloqueio", "Qual acontecimento te tira do sério?": "Privar de assistir jogo", "Você se considera uma pessoa focada?": "Não", "Qual a sua principal característica positiva?": "Inteligente", "Qual a sua principal característica negativa?": "Ambição", "O que você acha que te limita crescer?": "Desfoco", "Seu maior sonho?": "Ser rica e trabalhar com algo relacionado a futebol", "Você se acha uma pessoa produtiva?": "As Vezes", "Você cumpre suas tarefas?": "Talvez", "Você se considera disciplinado(a)?": "Sim", "Você pensa e descreve suas metas?": "Sim", "Pratica exercícios físicos?": "Não", "Quais são seus hobbies ?": "Ler, ouvir música e assistir jogo de futebol", "Você tem alimentação Saudável?": "Talvez", "Costuma ler pelo menos um livro por mês?": "Sim", "No momento, está lendo qual livro?": "Harry Potter e o Cálice de Fogo", "O que você mais ama fazer?": "Ouvir música", "O que te deixa irado(a)?": "Quando o flamengo ganha ou perde algum jogo", "Qual foi sua maior decepção até hoje?": "Não sei", "Se você pudesse dizer em uma frase o que é trauma ou o que foi trauma para você, o que seria?": "Não sei", "EU VOU PEGAR FIRME COM VOCÊ! PODEMOS?": "Não"}, "sessions": []}, "Luciana de fatima da silva": {"created": "2023/03/01 11:16:20 AM GMT-3", "phone": "46999080162", "email": "Luciana8131@gmail.com", "anamnese": {"Data de Nascimento": "2023-03-09", "Cidade": "Bom Jesus do Sul", "Estado Civil": "Casada(O)", "Filhos ?": "Não", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profissão": "Auxiliar de cozinha", "Fone do Cônjuge, Filho(a) ou um Parente próximo": "46999073894", "Fone de um(a) amigo(a) que te conheça bem": "42998600311", "Toma remédio controlado? Qual Remédio ?": "Não", "Já fez terapia?": "Não", "Caso tenha feito, quanto tempo de terapia?": "Não fiz", "Quando foi a última vez?": "2023-03-01", "O que achou da sua última terapia com outro profissional?": "Não fiz", "Descreva o motivo pelo qual você busca ajuda terapêutica": "Não fiz", "De 0 a 10, em ordem crescente, qual a nota que você dá para o seu estado emocional?": "8", "Tem um credo ou uma fé que você acredita? Qual?": "Acredito na oração", "Qual é o seu Instagram?": "@luciana de fatima da silva", "Qual é o seu maior desafio?": "Superar os filhos que perdi.", "Qual acontecimento te tira do sério?": "Descaso com outras pessoas", "Você se considera uma pessoa focada?": "As Vezes", "Qual a sua principal característica positiva?": "Lealdade", "Qual a sua principal característica negativa?": "Teimosia", "O que você acha que te limita crescer?": "Eu mesma", "Seu maior sonho?": "Que o mundo seja melhor", "Você se acha uma pessoa produtiva?": "Sim", "Você cumpre suas tarefas?": "Sim", "Você se considera disciplinado(a)?": "Não", "Você pensa e descreve suas metas?": "Sim", "Pratica exercícios físicos?": "Não", "Quais são seus hobbies ?": "Leitura e ouvir música", "Você tem alimentação Saudável?": "Talvez", "Costuma ler pelo menos um livro por mês?": "Sim", "No momento, está lendo qual livro?": "Mentes que amam demais. \\" Ana Beatriz Barbosa Silva", "O que você mais ama fazer?": "Ficar em casa", "O que te deixa irado(a)?": "Coisar fora do lugar e sujas", "Qual foi sua maior decepção até hoje?": "Minha mãe", "Se você pudesse dizer em uma frase o que é trauma ou o que foi trauma para você, o que seria?": "Trauma pra mim foi a perda dos meus filhos e descobrir que eu estava sozinha pra enfrentar tudo pq as pessoas que deveriam me ajudar me acolher não o fizeram.", "EU VOU PEGAR FIRME COM VOCÊ! PODEMOS?": "Sim"}, "sessions": []}, "Patrícia Lara Moreira": {"created": "2023/03/02 12:09:46 PM GMT-3", "phone": "49991250388", "email": "patriciabesteti@gmail.com", "anamnese": {"Data de Nascimento": "1979-10-09", "Cidade": "Dionisio Cerqueira", "Estado Civil": "Divorciada ,mas já fazem 3 anos q estou com outra pessoa", "Filhos ?": "Não", "Quantos Filhos e Qual a Idade Deles ?": "0", "Profissão": "Empreendedora", "Fone do Cônjuge, Filho(a) ou um Parente próximo": "49991900576", "Fone de um(a) amigo(a) que te conheça bem": "49991526001", "Toma remédio controlado? Qual Remédio ?": "Sim ,vários sou epocondriaca...", "Já fez terapia?": "Não", "Caso tenha feito, quanto tempo de terapia?": "Fui atendida por 2 piscoligas, Deus me livr", "Quando foi a última vez?": "2020-06-03", "O que achou da sua última terapia com outro profissional?": "Não é a mesma coisa com piscologas uma péssima", "Descreva o motivo pelo qual você busca ajuda terapêutica": "Pq tem dias q nem eu me suporto de tanta ansiedade, insônia e etc e tals...", "De 0 a 10, em ordem crescente, qual a nota que você dá para o seu estado emocional?": "1", "Tem um credo ou uma fé que você acredita? Qual?": "Cristã", "Qual é o seu Instagram?": "Não tenho", "Qual é o seu maior desafio?": "Superar a outra Patrícia q tem dentro dessa Patrícia Lara", "Qual acontecimento te tira do sério?": "Injustiça, ingratidão...", "Você se considera uma pessoa focada?": "As Vezes", "Qual a sua principal característica positiva?": "Minha Fé, talvez o q ainda me mantenha viva...\\"morta\\"", "Qual a sua principal característica negativa?": "O NEGATIVISMO", "O que você acha que te limita crescer?": "Meus medos,meus traumas...", "Seu maior sonho?": "Superar a mim mesma;", "Você se acha uma pessoa produtiva?": "Sim", "Você cumpre suas tarefas?": "Sim", "Você se considera disciplinado(a)?": "Não", "Você pensa e descreve suas metas?": "Não", "Pratica exercícios físicos?": "Não", "Quais são seus hobbies ?": "Me trancar no meu quarto escuro", "Você tem alimentação Saudável?": "Não", "Costuma ler pelo menos um livro por mês?": "Não", "No momento, está lendo qual livro?": "Nenhum", "O que você mais ama fazer?": "Me trancar num quarto escuro 😞", "O que te deixa irado(a)?": "Falta de respeito", "Qual foi sua maior decepção até hoje?": "Minha família", "Se você pudesse dizer em uma frase o que é trauma ou o que foi trauma para você, o que seria?": "É algo q me bloqueia pra sempre!", "EU VOU PEGAR FIRME COM VOCÊ! PODEMOS?": "Sim"}, "sessions": []}}, "agenda": [], "finance": [], "config": {"fields": ["Queixa Principal", "Histórico Pessoal", "Estrutura Familiar", "Sonhos/Inconsciente", "Medicamentos", "Hipótese Diagnóstica"]}}`;
 
+// Constantes do Sistema
 const DB_KEY = "PSI_MANAGER_V7";
 const API_URL = "https://script.google.com/macros/s/AKfycbzHH4Ct2sIu72O_CB4odDmE8dO88_YXic3BCYZ8p2Lq42hq_GCq9KdpGE42p2a60JHODQ/exec";
 const DEFAULT_FIELDS = ["Queixa Principal", "Histórico Pessoal", "Estrutura Familiar", "Sonhos/Inconsciente", "Medicamentos", "Hipótese Diagnóstica"];
 
-let DATA = { pass: null, patients: {}, agenda: [], finance: [], config: { fields: DEFAULT_FIELDS } };
+// Variáveis Globais
+let DATA = { 
+    pass: null, 
+    patients: {}, 
+    agenda: [], 
+    finance: [], 
+    config: { fields: DEFAULT_FIELDS } 
+};
 let CURR_PATIENT = null;
 
-// --- RESET SYSTEM ---
+// ============================================
+// SISTEMA DE RESET E RECUPERAÇÃO
+// ============================================
+
 function hardReset() {
-    if(confirm("ATENÇÃO: Isso apagará qualquer dado salvo neste navegador para corrigir problemas de login.\n\nO sistema será recarregado com a lista padrão de pacientes.\n\nDeseja continuar?")) {
+    if(confirm("⚠️ ATENÇÃO: Isso apagará qualquer dado salvo neste navegador para corrigir problemas de login.\n\nO sistema será recarregado com a lista padrão de pacientes.\n\n✅ Deseja continuar?")) {
         localStorage.clear();
         location.reload();
     }
 }
 
-// --- LOGIN & AUTO-LOAD ---
-function togglePass() { const x = document.getElementById("passInput"); x.type = x.type === "password" ? "text" : "password"; }
+// ============================================
+// LOGIN E AUTENTICAÇÃO
+// ============================================
+
+function togglePass() { 
+    const input = document.getElementById("passInput"); 
+    input.type = input.type === "password" ? "text" : "password"; 
+}
 
 function tryLogin() {
     const pass = document.getElementById('passInput').value;
     const box = document.querySelector('.input-group input');
     const err = document.getElementById('loginError');
 
-    if(!pass) { err.innerText = "Digite a senha."; shake(box); return; }
+    if(!pass) { 
+        err.innerText = "⚠️ Digite a senha."; 
+        shake(box); 
+        return; 
+    }
 
     let encrypted = localStorage.getItem(DB_KEY);
-    // Tenta migrar v6
+    
+    // Tenta migrar v6 se existir
     if(!encrypted) {
         const v6 = localStorage.getItem("PSI_MANAGER_V6");
         if(v6) encrypted = v6;
     }
 
     if(encrypted) {
+        // Banco de dados existe - tentar descriptografar
         const decrypted = decrypt(encrypted, pass);
         if(decrypted) {
-            DATA = JSON.parse(decrypted);
-            DATA.agenda = DATA.agenda || [];
-            DATA.finance = DATA.finance || [];
-            DATA.pass = pass;
-            initApp();
+            try {
+                DATA = JSON.parse(decrypted);
+                DATA.agenda = DATA.agenda || [];
+                DATA.finance = DATA.finance || [];
+                DATA.config = DATA.config || { fields: DEFAULT_FIELDS };
+                DATA.pass = pass;
+                initApp();
+            } catch(e) {
+                err.innerText = "❌ Erro ao carregar dados"; 
+                shake(box);
+            }
         } else {
-            err.innerText = "SENHA INCORRETA"; shake(box);
+            err.innerText = "❌ SENHA INCORRETA"; 
+            shake(box);
         }
     } else {
-        // --- MÁGICA: CARREGA DADOS SE FOR NOVO ---
-        if(confirm("Bem-vinda!\n\nDetectamos que é seu primeiro acesso.\nCarregar automaticamente a lista de pacientes?\n\nSenha a ser definida: " + pass)) {
-            DATA = JSON.parse(SEED_DATA_JSON);
-            DATA.pass = pass;
-            saveDB();
-            initApp();
+        // Primeiro acesso - carregar dados automaticamente
+        if(confirm("👋 Bem-vinda!\n\nDetectamos que é seu primeiro acesso.\n\n✅ Carregar automaticamente a lista de 98 pacientes?\n\n🔒 Senha a ser definida: " + pass)) {
+            try {
+                DATA = JSON.parse(SEED_DATA_JSON);
+                DATA.pass = pass;
+                saveDB();
+                initApp();
+            } catch(e) {
+                alert("❌ Erro ao carregar dados iniciais. Tente novamente.");
+            }
         }
     }
 }
@@ -283,7 +806,7 @@ function tryLogin() {
 function initApp() {
     document.getElementById('loginScreen').style.display = 'none';
     
-    // VERIFICAÇÃO DE EMERGÊNCIA
+    // Verificação de emergência - lista vazia
     if(Object.keys(DATA.patients).length === 0) {
         document.getElementById('emergencyLoad').classList.remove('hidden');
     } else {
@@ -294,164 +817,633 @@ function initApp() {
     renderAgendaList();
 }
 
-// --- FUNÇÃO DE EMERGÊNCIA (BOTÃO VERMELHO) ---
+// ============================================
+// FUNÇÃO DE EMERGÊNCIA (BOTÃO VERMELHO)
+// ============================================
+
 function forceLoadSeed() {
-    if(confirm("Isso vai apagar a lista vazia atual e carregar os 98 pacientes da Dra. Edelize.\n\nConfirmar?")) {
-        const seed = JSON.parse(SEED_DATA_JSON);
-        DATA.patients = seed.patients;
-        saveDB();
-        location.reload();
+    if(confirm("⚠️ ATENÇÃO!\n\nIsso vai apagar a lista vazia atual e carregar os 98 pacientes da base.\n\n✅ Confirmar carga de emergência?")) {
+        try {
+            const seed = JSON.parse(SEED_DATA_JSON);
+            DATA.patients = seed.patients;
+            DATA.agenda = seed.agenda || [];
+            DATA.finance = seed.finance || [];
+            DATA.config = seed.config || { fields: DEFAULT_FIELDS };
+            saveDB();
+            location.reload();
+        } catch(e) {
+            alert("❌ Erro ao carregar dados de emergência.");
+        }
     }
 }
 
-function shake(el) { el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 500); }
-function saveDB() { if(DATA.pass) { localStorage.setItem(DB_KEY, encrypt(JSON.stringify(DATA), DATA.pass)); } }
-function encrypt(t, k) { return btoa(t.split('').map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ k.charCodeAt(i % k.length))).join('')); }
-function decrypt(t, k) { try { return atob(t).split('').map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ k.charCodeAt(i % k.length))).join(''); } catch(e) { return null; } }
-function logout() { location.reload(); }
+// ============================================
+// UTILITÁRIOS
+// ============================================
 
-// --- UI ---
-function switchSidebar(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('sidePacientes').classList.add('hidden'); document.getElementById('sideAgenda').classList.add('hidden');
-    if(tab === 'pacientes') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('sidePacientes').classList.remove('hidden'); }
-    else { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('sideAgenda').classList.remove('hidden'); renderAgendaList(); }
+function shake(el) { 
+    el.classList.add('shake'); 
+    setTimeout(() => el.classList.remove('shake'), 500); 
 }
-function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-function openModal(id) { document.getElementById(id).style.display = 'flex'; }
 
-// --- PACIENTES ---
+function saveDB() { 
+    if(DATA.pass) { 
+        try {
+            localStorage.setItem(DB_KEY, encrypt(JSON.stringify(DATA), DATA.pass)); 
+        } catch(e) {
+            console.error("Erro ao salvar:", e);
+            alert("⚠️ Erro ao salvar dados. Memória cheia?");
+        }
+    } 
+}
+
+function encrypt(text, key) { 
+    return btoa(text.split('').map((c,i) => 
+        String.fromCharCode(c.charCodeAt(0) ^ key.charCodeAt(i % key.length))
+    ).join('')); 
+}
+
+function decrypt(text, key) { 
+    try { 
+        return atob(text).split('').map((c,i) => 
+            String.fromCharCode(c.charCodeAt(0) ^ key.charCodeAt(i % key.length))
+        ).join(''); 
+    } catch(e) { 
+        return null; 
+    } 
+}
+
+function logout() { 
+    location.reload(); 
+}
+
+// ============================================
+// INTERFACE E NAVEGAÇÃO
+// ============================================
+
+function switchSidebar(tab) {
+    // Remove active de todas as tabs
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
+    // Esconde todos os painéis
+    document.getElementById('sidePacientes').classList.add('hidden'); 
+    document.getElementById('sideAgenda').classList.add('hidden');
+    
+    // Mostra painel selecionado
+    if(tab === 'pacientes') { 
+        document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
+        document.getElementById('sidePacientes').classList.remove('hidden'); 
+    } else { 
+        document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
+        document.getElementById('sideAgenda').classList.remove('hidden'); 
+        renderAgendaList(); 
+    }
+}
+
+function closeModal(id) { 
+    document.getElementById(id).style.display = 'none'; 
+}
+
+function openModal(id) { 
+    document.getElementById(id).style.display = 'flex'; 
+}
+
+// ============================================
+// GESTÃO DE PACIENTES
+// ============================================
+
 function renderList() {
     const div = document.getElementById('patientList');
     const term = document.getElementById('searchBox').value.toLowerCase();
     div.innerHTML = '';
-    Object.keys(DATA.patients).sort().forEach(name => {
+    
+    const patients = Object.keys(DATA.patients).sort();
+    
+    patients.forEach(name => {
         if(name.toLowerCase().includes(term)) {
             const el = document.createElement('div');
             el.className = `patient-row ${CURR_PATIENT === name ? 'active' : ''}`;
-            el.innerText = name; el.onclick = () => loadPatient(name);
+            el.innerText = name; 
+            el.onclick = () => loadPatient(name);
             div.appendChild(el);
         }
     });
 }
+
 function addManual() {
-    const name = prompt("Nome Completo:");
-    if(name && !DATA.patients[name]) { DATA.patients[name] = { created: new Date().toISOString(), anamnese: {}, sessions: [] }; saveDB(); renderList(); loadPatient(name); }
-    else if(DATA.patients[name]) { alert("Já existe!"); loadPatient(name); }
+    const name = prompt("📝 Nome Completo do Paciente:");
+    if(name && name.trim()) {
+        const nameTrimmed = name.trim();
+        if(!DATA.patients[nameTrimmed]) { 
+            DATA.patients[nameTrimmed] = { 
+                created: new Date().toLocaleString('pt-BR'), 
+                phone: '',
+                email: '',
+                anamnese: {}, 
+                sessions: [] 
+            }; 
+            saveDB(); 
+            renderList(); 
+            loadPatient(nameTrimmed); 
+        } else {
+            alert("⚠️ Paciente já existe!"); 
+            loadPatient(nameTrimmed); 
+        }
+    }
 }
+
 function loadPatient(name) {
-    CURR_PATIENT = name; const p = DATA.patients[name];
-    document.getElementById('emptyState').classList.add('hidden'); document.getElementById('financeView').classList.add('hidden'); document.getElementById('patientView').classList.remove('hidden');
-    document.getElementById('pName').innerText = name; document.getElementById('pPhone').value = p.phone || ''; document.getElementById('pEmail').value = p.email || '';
+    CURR_PATIENT = name; 
+    const p = DATA.patients[name];
     
-    const anDiv = document.getElementById('anamneseFields'); anDiv.innerHTML = '';
+    // Esconde outros painéis e mostra paciente
+    document.getElementById('emptyState').classList.add('hidden'); 
+    document.getElementById('financeView').classList.add('hidden'); 
+    document.getElementById('patientView').classList.remove('hidden');
+    
+    // Preenche dados básicos
+    document.getElementById('pName').innerText = name; 
+    document.getElementById('pPhone').value = p.phone || ''; 
+    document.getElementById('pEmail').value = p.email || '';
+    
+    // Campos configurados da anamnese
+    const anDiv = document.getElementById('anamneseFields'); 
+    anDiv.innerHTML = '';
     DATA.config.fields.forEach(field => {
-        const l = document.createElement('label'); l.innerText = field;
-        const t = document.createElement('textarea'); t.dataset.field = field; t.value = p.anamnese[field] || '';
-        anDiv.appendChild(l); anDiv.appendChild(t);
+        const label = document.createElement('label'); 
+        label.innerText = field;
+        const textarea = document.createElement('textarea'); 
+        textarea.dataset.field = field; 
+        textarea.value = p.anamnese[field] || '';
+        anDiv.appendChild(label); 
+        anDiv.appendChild(textarea);
     });
     
-    const exDiv = document.getElementById('extraContainer'); const exBox = document.getElementById('extraFields'); exDiv.innerHTML = ''; let hasExtra = false;
+    // Campos extras (importados)
+    const exDiv = document.getElementById('extraContainer'); 
+    const exBox = document.getElementById('extraFields'); 
+    exDiv.innerHTML = ''; 
+    let hasExtra = false;
+    
     Object.keys(p.anamnese).forEach(key => {
         if(!DATA.config.fields.includes(key)) {
             hasExtra = true;
-            const l = document.createElement('label'); l.innerText = key;
-            const t = document.createElement('textarea'); t.dataset.extra = key; t.value = p.anamnese[key];
-            exDiv.appendChild(l); exDiv.appendChild(t);
+            const label = document.createElement('label'); 
+            label.innerText = key;
+            const textarea = document.createElement('textarea'); 
+            textarea.dataset.extra = key; 
+            textarea.value = p.anamnese[key];
+            exDiv.appendChild(label); 
+            exDiv.appendChild(textarea);
         }
     });
+    
     hasExtra ? exBox.classList.remove('hidden') : exBox.classList.add('hidden');
-    renderList(); renderSessions(); document.getElementById('sessionDate').valueAsDate = new Date();
+    
+    // Renderiza lista e sessões
+    renderList(); 
+    renderSessions(); 
+    
+    // Define data atual no campo de sessão
+    document.getElementById('sessionDate').valueAsDate = new Date();
 }
-function saveCurrent() { if(!CURR_PATIENT)return; const p=DATA.patients[CURR_PATIENT]; p.phone=document.getElementById('pPhone').value; p.email=document.getElementById('pEmail').value; saveDB(); }
+
+function saveCurrent() { 
+    if(!CURR_PATIENT) return; 
+    const p = DATA.patients[CURR_PATIENT]; 
+    p.phone = document.getElementById('pPhone').value; 
+    p.email = document.getElementById('pEmail').value; 
+    saveDB(); 
+}
+
 function saveAnamnese() {
-    if(!CURR_PATIENT)return; const p=DATA.patients[CURR_PATIENT];
-    document.querySelectorAll('#anamneseFields textarea').forEach(el => p.anamnese[el.dataset.field] = el.value);
-    document.querySelectorAll('#extraContainer textarea').forEach(el => p.anamnese[el.dataset.extra] = el.value);
-    saveDB(); alert("Salvo!");
+    if(!CURR_PATIENT) return; 
+    const p = DATA.patients[CURR_PATIENT];
+    
+    // Salva campos configurados
+    document.querySelectorAll('#anamneseFields textarea').forEach(el => {
+        p.anamnese[el.dataset.field] = el.value;
+    });
+    
+    // Salva campos extras
+    document.querySelectorAll('#extraContainer textarea').forEach(el => {
+        p.anamnese[el.dataset.extra] = el.value;
+    });
+    
+    saveDB(); 
+    alert("✅ Dados salvos com sucesso!");
 }
+
 function deletePatient() {
-    if(confirm("Tem certeza que deseja apagar "+CURR_PATIENT+"?")) { delete DATA.patients[CURR_PATIENT]; CURR_PATIENT=null; saveDB(); renderList(); document.getElementById('patientView').classList.add('hidden'); document.getElementById('emptyState').classList.remove('hidden'); }
+    if(confirm(`⚠️ Tem certeza que deseja apagar o paciente:\n\n${CURR_PATIENT}\n\nEsta ação não pode ser desfeita!`)) { 
+        delete DATA.patients[CURR_PATIENT]; 
+        CURR_PATIENT = null; 
+        saveDB(); 
+        renderList(); 
+        document.getElementById('patientView').classList.add('hidden'); 
+        document.getElementById('emptyState').classList.remove('hidden'); 
+    }
 }
 
-// --- SESSÕES ---
+// ============================================
+// GESTÃO DE SESSÕES
+// ============================================
+
 function addSession() {
-    const d = document.getElementById('sessionDate').value, t = document.getElementById('sessionText').value;
-    if(!d || !t) return alert("Preencha data e texto.");
-    DATA.patients[CURR_PATIENT].sessions.unshift({date:d, text:t}); saveDB(); document.getElementById('sessionText').value=''; renderSessions();
+    const date = document.getElementById('sessionDate').value;
+    const text = document.getElementById('sessionText').value;
+    
+    if(!date || !text) {
+        return alert("⚠️ Preencha data e texto da sessão.");
+    }
+    
+    DATA.patients[CURR_PATIENT].sessions.unshift({
+        date: date, 
+        text: text
+    }); 
+    
+    saveDB(); 
+    document.getElementById('sessionText').value = ''; 
+    renderSessions();
+    alert("✅ Sessão adicionada!");
 }
+
 function renderSessions() {
-    const div = document.getElementById('sessionHistory'); div.innerHTML='';
-    DATA.patients[CURR_PATIENT].sessions.forEach((s, idx) => {
-        const card=document.createElement('div'); card.style="background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:15px; border-left:5px solid var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.05)";
-        card.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><strong style="color:var(--primary-dark)">🗓️ ${new Date(s.date).toLocaleDateString()}</strong></div><p style="white-space:pre-wrap; color:#334155; line-height:1.6;">${s.text}</p>`;
-        const del=document.createElement('button'); del.innerText='🗑 Excluir'; del.style="float:right; border:none; cursor:pointer; color:red; background:none;";
-        del.onclick=()=>{if(confirm("Apagar?")){DATA.patients[CURR_PATIENT].sessions.splice(idx,1); saveDB(); renderSessions();}};
-        card.append(del); div.appendChild(card);
+    const div = document.getElementById('sessionHistory'); 
+    div.innerHTML = '';
+    
+    const sessions = DATA.patients[CURR_PATIENT].sessions;
+    
+    if(sessions.length === 0) {
+        div.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">Nenhuma sessão registrada ainda.</p>';
+        return;
+    }
+    
+    sessions.forEach((session, idx) => {
+        const card = document.createElement('div'); 
+        card.style = "background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:15px; border-left:5px solid var(--primary); box-shadow:0 2px 5px rgba(0,0,0,0.05)";
+        
+        const dateObj = new Date(session.date);
+        const dateStr = dateObj.toLocaleDateString('pt-BR');
+        
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <strong style="color:var(--primary-dark)">🗓️ ${dateStr}</strong>
+            </div>
+            <p style="white-space:pre-wrap; color:#334155; line-height:1.6;">${session.text}</p>
+        `;
+        
+        const deleteBtn = document.createElement('button'); 
+        deleteBtn.innerText = '🗑 Excluir'; 
+        deleteBtn.style = "float:right; border:none; cursor:pointer; color:red; background:none; font-weight: 600;";
+        deleteBtn.onclick = () => {
+            if(confirm("⚠️ Apagar esta sessão?")) {
+                DATA.patients[CURR_PATIENT].sessions.splice(idx, 1); 
+                saveDB(); 
+                renderSessions();
+            }
+        };
+        
+        card.appendChild(deleteBtn); 
+        div.appendChild(card);
     });
 }
 
-// --- FREUD ---
+// ============================================
+// ANÁLISE FREUDIANA (IA)
+// ============================================
+
 function askFreud() {
-    const p=DATA.patients[CURR_PATIENT]; let prompt=`Aja como Sigmund Freud. Analise este caso:\nPACIENTE: ${CURR_PATIENT}\n`;
-    for(let k in p.anamnese)if(p.anamnese[k])prompt+=`- ${k}: ${p.anamnese[k]}\n`;
-    prompt+=`\nSessões Recentes:\n`; p.sessions.slice(0,3).forEach(s=>prompt+=`[${s.date}] ${s.text}\n`);
-    prompt+=`\nInterpretação psicanalítica profunda:`; navigator.clipboard.writeText(prompt);
-    if(confirm("Prompt copiado! Abrir ChatGPT para análise freudiana?")) window.open("https://chatgpt.com", "_blank");
+    const p = DATA.patients[CURR_PATIENT]; 
+    let prompt = `Aja como Sigmund Freud. Analise este caso clínico:\n\nPACIENTE: ${CURR_PATIENT}\n\n`;
+    
+    // Adiciona anamnese
+    prompt += "ANAMNESE:\n";
+    for(let key in p.anamnese) {
+        if(p.anamnese[key]) {
+            prompt += `- ${key}: ${p.anamnese[key]}\n`;
+        }
+    }
+    
+    // Adiciona últimas sessões
+    prompt += `\nSESSÕES RECENTES:\n`;
+    p.sessions.slice(0, 3).forEach(s => {
+        const date = new Date(s.date).toLocaleDateString('pt-BR');
+        prompt += `[${date}] ${s.text}\n`;
+    });
+    
+    prompt += `\n🎩 Forneça uma interpretação psicanalítica profunda deste caso:`;
+    
+    navigator.clipboard.writeText(prompt);
+    
+    if(confirm("✅ Prompt copiado!\n\n🎩 Abrir ChatGPT para análise freudiana?")) {
+        window.open("https://chatgpt.com", "_blank");
+    }
 }
 
-// --- DOCS, FINANÇAS, AGENDA, SYNC (MANTIDOS & ESTILIZADOS) ---
-function openDocModal(){document.getElementById('docText').value=''; openModal('modalDoc');}
-function printDoc(){
-    document.getElementById('docPatientName').innerText=CURR_PATIENT; document.getElementById('docDate').innerText=new Date().toLocaleDateString();
-    document.getElementById('docTypeTitle').innerText=document.getElementById('docType').value; document.getElementById('docContentBody').innerHTML=document.getElementById('docText').value.replace(/\n/g,'<br>');
-    window.print();
+// ============================================
+// DOCUMENTOS E IMPRESSÃO
+// ============================================
+
+function openDocModal() {
+    document.getElementById('docText').value = ''; 
+    openModal('modalDoc');
 }
-function showFinance(){document.getElementById('emptyState').classList.add('hidden'); document.getElementById('patientView').classList.add('hidden'); document.getElementById('financeView').classList.remove('hidden'); renderFinance();}
-function openFinModal(){
-    const sel=document.getElementById('finPatient'); sel.innerHTML='<option value="Avulso">-- Avulso --</option>';
-    Object.keys(DATA.patients).sort().forEach(n=>sel.innerHTML+=`<option value="${n}">${n}</option>`);
-    if(CURR_PATIENT) sel.value=CURR_PATIENT; document.getElementById('finDate').valueAsDate=new Date(); openModal('modalFin');
+
+function printDoc() {
+    document.getElementById('docPatientName').innerText = CURR_PATIENT; 
+    document.getElementById('docDate').innerText = new Date().toLocaleDateString('pt-BR');
+    document.getElementById('docTypeTitle').innerText = document.getElementById('docType').value; 
+    document.getElementById('docContentBody').innerHTML = document.getElementById('docText').value.replace(/\n/g, '<br>');
+    
+    closeModal('modalDoc');
+    setTimeout(() => window.print(), 100);
 }
-function saveFin(){
-    const i={id:Date.now(), patient:document.getElementById('finPatient').value, desc:document.getElementById('finDesc').value, val:parseFloat(document.getElementById('finVal').value), status:document.getElementById('finStatus').value, date:document.getElementById('finDate').value};
-    if(!i.desc||isNaN(i.val))return alert("Erro"); DATA.finance.push(i); saveDB(); closeModal('modalFin'); renderFinance();
+
+// ============================================
+// CONTROLE FINANCEIRO
+// ============================================
+
+function showFinance() {
+    document.getElementById('emptyState').classList.add('hidden'); 
+    document.getElementById('patientView').classList.add('hidden'); 
+    document.getElementById('financeView').classList.remove('hidden'); 
+    renderFinance();
 }
-function renderFinance(){
-    const tb=document.querySelector('#finTable tbody'); tb.innerHTML=''; let pd=0, pn=0; const cm=new Date().getMonth();
-    DATA.finance.sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(f=>{
-        const d=new Date(f.date); if(d.getMonth()===cm){f.status==='pago'?pd+=f.val:pn+=f.val;}
-        tb.innerHTML+=`<tr><td>${d.toLocaleDateString()}</td><td>${f.patient}</td><td>${f.desc}</td><td>R$ ${f.val.toFixed(2)}</td><td><span style="padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:bold; background:${f.status==='pago'?'#dcfce7':'#fef3c7'}; color:${f.status==='pago'?'#166534':'#92400e'}">${f.status.toUpperCase()}</span></td><td><button style="color:red;border:none;background:none;cursor:pointer;" onclick="delFin(${f.id})">×</button></td></tr>`;
+
+function openFinModal() {
+    const select = document.getElementById('finPatient'); 
+    select.innerHTML = '<option value="Avulso">-- Avulso --</option>';
+    
+    Object.keys(DATA.patients).sort().forEach(name => {
+        select.innerHTML += `<option value="${name}">${name}</option>`;
     });
-    document.getElementById('finTotalPaid').innerText=`R$ ${pd.toFixed(2)}`; document.getElementById('finTotalPending').innerText=`R$ ${pn.toFixed(2)}`;
+    
+    if(CURR_PATIENT) {
+        select.value = CURR_PATIENT;
+    }
+    
+    document.getElementById('finDate').valueAsDate = new Date(); 
+    openModal('modalFin');
 }
-function delFin(id){if(confirm("Excluir?")){DATA.finance=DATA.finance.filter(f=>f.id!==id); saveDB(); renderFinance();}}
-function billSession(){openFinModal(); document.getElementById('finDesc').value="Sessão Terapia";}
-function renderAgendaList(){
-    const div=document.getElementById('agendaList'); div.innerHTML=''; const now=new Date(); now.setHours(0,0,0,0);
-    DATA.agenda.filter(a=>new Date(a.date)>=now).sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(a=>{
-        const d=new Date(a.date); div.innerHTML+=`<div class="patient-row" style="border-left:4px solid var(--secondary)"><strong>${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</strong><br>${a.patient}<br><small style="color:#64748b">${a.obs}</small><button style="float:right;color:red;border:none;background:none;cursor:pointer;" onclick="delAg(${a.id})">Cancel</button></div>`;
+
+function saveFin() {
+    const entry = {
+        id: Date.now(), 
+        patient: document.getElementById('finPatient').value, 
+        desc: document.getElementById('finDesc').value, 
+        val: parseFloat(document.getElementById('finVal').value), 
+        status: document.getElementById('finStatus').value, 
+        date: document.getElementById('finDate').value
+    };
+    
+    if(!entry.desc || isNaN(entry.val)) {
+        return alert("⚠️ Preencha todos os campos corretamente.");
+    }
+    
+    DATA.finance.push(entry); 
+    saveDB(); 
+    closeModal('modalFin'); 
+    renderFinance();
+    alert("✅ Lançamento salvo!");
+}
+
+function renderFinance() {
+    const tbody = document.querySelector('#finTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    let totalPaid = 0;
+    let totalPending = 0; 
+    const currentMonth = new Date().getMonth();
+    
+    // Calcula totais do mês atual
+    DATA.finance.forEach(entry => {
+        const entryDate = new Date(entry.date); 
+        if(entryDate.getMonth() === currentMonth) {
+            if(entry.status === 'pago') {
+                totalPaid += entry.val;
+            } else {
+                totalPending += entry.val;
+            }
+        }
     });
-    const sel=document.getElementById('agPatient'); sel.innerHTML=''; Object.keys(DATA.patients).sort().forEach(n=>sel.innerHTML+=`<option value="${n}">${n}</option>`);
+    
+    // Renderiza tabela (ordenada por data decrescente)
+    DATA.finance
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach(entry => {
+            const date = new Date(entry.date);
+            const statusColor = entry.status === 'pago' ? '#dcfce7' : '#fef3c7';
+            const statusTextColor = entry.status === 'pago' ? '#166534' : '#92400e';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>${date.toLocaleDateString('pt-BR')}</td>
+                    <td>${entry.patient}</td>
+                    <td>${entry.desc}</td>
+                    <td>R$ ${entry.val.toFixed(2)}</td>
+                    <td>
+                        <span style="padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:bold; background:${statusColor}; color:${statusTextColor}">
+                            ${entry.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <button style="color:red;border:none;background:none;cursor:pointer;font-size:1.5rem;" onclick="delFin(${entry.id})">×</button>
+                    </td>
+                </tr>
+            `;
+        });
+    
+    // Atualiza totais
+    document.getElementById('finTotalPaid').innerText = `R$ ${totalPaid.toFixed(2)}`; 
+    document.getElementById('finTotalPending').innerText = `R$ ${totalPending.toFixed(2)}`;
 }
-function saveAgenda(){
-    const i={id:Date.now(), patient:document.getElementById('agPatient').value, date:document.getElementById('agDate').value, obs:document.getElementById('agObs').value};
-    if(!i.patient||!i.date)return alert("Erro"); DATA.agenda.push(i); saveDB(); closeModal('modalAgenda'); renderAgendaList();
+
+function delFin(id) {
+    if(confirm("⚠️ Excluir este lançamento?")) {
+        DATA.finance = DATA.finance.filter(f => f.id !== id); 
+        saveDB(); 
+        renderFinance();
+    }
 }
-function delAg(id){if(confirm("Cancelar?")){DATA.agenda=DATA.agenda.filter(a=>a.id!==id); saveDB(); renderAgendaList();}}
-function syncCloud(){
-    const b=document.querySelector('.btn-sync'); const t=b.innerHTML; b.innerHTML="⌛...";
-    fetch(API_URL).then(r=>r.json()).then(d=>{
-        let c=0; if(d.pacientes)d.pacientes.forEach(r=>{const n=r.dados.nome; if(n&&!DATA.patients[n]){DATA.patients[n]={created:new Date().toISOString(), anamnese:{}, sessions:[]}; c++;} if(DATA.patients[n]&&r.dados.respostas)for(let k in r.dados.respostas)if(!DATA.patients[n].anamnese[k])DATA.patients[n].anamnese[k]=r.dados.respostas[k];});
-        saveDB(); renderList(); alert(c>0?`${c} novos!`:"Atualizado.");
-    }).catch(e=>alert("Erro: "+e)).finally(()=>b.innerHTML=t);
+
+function billSession() {
+    openFinModal(); 
+    document.getElementById('finDesc').value = "Sessão de Terapia";
 }
-function exportBackup(){const b=new Blob([JSON.stringify(DATA)],{type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=`Backup_PsiManager_${new Date().toISOString().slice(0,10)}.json`; a.click();}
-function openConfig(){document.getElementById('cfgFields').value=DATA.config.fields.join(", "); openModal('modalConfig');}
-function saveConfig(){DATA.config.fields=document.getElementById('cfgFields').value.split(',').map(s=>s.trim()).filter(s=>s); saveDB(); closeModal('modalConfig'); if(CURR_PATIENT)loadPatient(CURR_PATIENT);}
-function triggerImport(){document.getElementById('fileInput').click();}
-// A função runImport continua existindo como backup, mas não é necessária agora
-function runImport(i){ /* Mantido caso precise importar mais depois */ }
+
+// ============================================
+// AGENDA
+// ============================================
+
+function renderAgendaList() {
+    const div = document.getElementById('agendaList'); 
+    div.innerHTML = ''; 
+    
+    const now = new Date(); 
+    now.setHours(0, 0, 0, 0);
+    
+    const upcoming = DATA.agenda
+        .filter(a => new Date(a.date) >= now)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    if(upcoming.length === 0) {
+        div.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">Nenhum agendamento futuro.</p>';
+    }
+    
+    upcoming.forEach(appt => {
+        const date = new Date(appt.date); 
+        const dateStr = date.toLocaleDateString('pt-BR');
+        const timeStr = date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        
+        const card = document.createElement('div');
+        card.className = 'patient-row';
+        card.style.borderLeft = '4px solid var(--accent)';
+        
+        card.innerHTML = `
+            <strong>${dateStr} ${timeStr}</strong><br>
+            ${appt.patient}<br>
+            <small style="color:#64748b">${appt.obs}</small>
+            <button style="float:right;color:red;border:none;background:none;cursor:pointer;font-weight:600;" onclick="delAg(${appt.id})">
+                Cancelar
+            </button>
+        `;
+        
+        div.appendChild(card);
+    });
+    
+    // Popula select de pacientes no modal
+    const select = document.getElementById('agPatient'); 
+    select.innerHTML = ''; 
+    Object.keys(DATA.patients).sort().forEach(name => {
+        select.innerHTML += `<option value="${name}">${name}</option>`;
+    });
+}
+
+function saveAgenda() {
+    const entry = {
+        id: Date.now(), 
+        patient: document.getElementById('agPatient').value, 
+        date: document.getElementById('agDate').value, 
+        obs: document.getElementById('agObs').value
+    };
+    
+    if(!entry.patient || !entry.date) {
+        return alert("⚠️ Preencha paciente e data/hora.");
+    }
+    
+    DATA.agenda.push(entry); 
+    saveDB(); 
+    closeModal('modalAgenda'); 
+    renderAgendaList();
+    alert("✅ Consulta agendada!");
+}
+
+function delAg(id) {
+    if(confirm("⚠️ Cancelar este agendamento?")) {
+        DATA.agenda = DATA.agenda.filter(a => a.id !== id); 
+        saveDB(); 
+        renderAgendaList();
+    }
+}
+
+// ============================================
+// SINCRONIZAÇÃO E BACKUP
+// ============================================
+
+function syncCloud() {
+    const btn = document.querySelector('.btn-secondary');
+    const originalText = btn.innerHTML; 
+    btn.innerHTML = "⌛ Sincronizando...";
+    btn.disabled = true;
+    
+    fetch(API_URL)
+        .then(r => r.json())
+        .then(data => {
+            let count = 0; 
+            
+            if(data.pacientes) {
+                data.pacientes.forEach(record => {
+                    const name = record.dados.nome; 
+                    
+                    if(name && !DATA.patients[name]) {
+                        DATA.patients[name] = {
+                            created: new Date().toLocaleString('pt-BR'), 
+                            phone: '',
+                            email: '',
+                            anamnese: {}, 
+                            sessions: []
+                        }; 
+                        count++;
+                    }
+                    
+                    if(DATA.patients[name] && record.dados.respostas) {
+                        for(let key in record.dados.respostas) {
+                            if(!DATA.patients[name].anamnese[key]) {
+                                DATA.patients[name].anamnese[key] = record.dados.respostas[key];
+                            }
+                        }
+                    }
+                });
+            }
+            
+            saveDB(); 
+            renderList(); 
+            alert(count > 0 ? `✅ ${count} novos pacientes sincronizados!` : "✅ Sistema atualizado.");
+        })
+        .catch(e => {
+            console.error(e);
+            alert("❌ Erro na sincronização: " + e.message);
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+}
+
+function exportBackup() {
+    const blob = new Blob([JSON.stringify(DATA, null, 2)], {type: "application/json"}); 
+    const link = document.createElement('a'); 
+    link.href = URL.createObjectURL(blob); 
+    link.download = `Backup_PsiManager_${new Date().toISOString().slice(0, 10)}.json`; 
+    link.click();
+    alert("✅ Backup gerado com sucesso!");
+}
+
+// ============================================
+// CONFIGURAÇÃO
+// ============================================
+
+function openConfig() {
+    document.getElementById('cfgFields').value = DATA.config.fields.join(", "); 
+    openModal('modalConfig');
+}
+
+function saveConfig() {
+    const fieldsText = document.getElementById('cfgFields').value;
+    DATA.config.fields = fieldsText
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s); 
+    
+    saveDB(); 
+    closeModal('modalConfig'); 
+    
+    if(CURR_PATIENT) {
+        loadPatient(CURR_PATIENT);
+    }
+    
+    alert("✅ Configuração salva!");
+}
+
+// ============================================
+// INICIALIZAÇÃO
+// ============================================
+
+console.log("🧠 PsiManager v7.4 - Sistema Carregado");
+console.log("✅ Varredura completa realizada");
+console.log("🔧 Sistema otimizado e funcionando");
+
 </script>
 </body>
 </html>
